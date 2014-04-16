@@ -22,3 +22,5 @@ Packages are:
 
 <br>
 Please ensure you also have the Leap Motion API installed, and are using correct signaling protocols. 
+<br>
+To run files, type <code>node [.js file]</code> in a command line.
