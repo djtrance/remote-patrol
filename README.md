@@ -19,3 +19,6 @@ Packages are:
 *	ardrone-webflight
 *	ardrone-panorama
 *	ardrone-browser-3d
+
+<br>
+Please ensure you also have the Leap Motion API installed, and are using correct signaling protocols. 
