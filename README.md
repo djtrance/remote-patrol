@@ -7,7 +7,7 @@ Please install the following:
 
 Then run the following:
 
-	npm install [package]
+	npm install -g [package]
 	
 Packages are:
 
