@@ -9,7 +9,7 @@ function Controller (client) {
 	this.xSpeed = 0;
 	this.ySpeed = 0;
 	this.tol = .01;
-	this.die = false;
+	this.shouldDie = false;
 }
 
 Controller.prototype.update = function() {
@@ -87,5 +87,5 @@ Controller.prototype.kill = function() {
 }
 
 Controller.prototype.shouldKill = function() {
-	return this.die;
+	return this.shouldDie;
 }
