@@ -201,8 +201,12 @@ function hover () {
   resetCalibration();
 }*/
 
+
+//## A lot of this was swapped for orientation, 
+//and it's a bad hack that should probably be solved.
+
 // TODO: frontBack/leftRight can be partially applied into 1 function!
-function frontBack(value, self) {
+function leftRight(value, self) { //switched with frontBack
   var _scale = _.partial(scale, self.calibration.lon, 80);
 
   if (isSimilar(value, self.calibration.lon)) {
@@ -213,38 +217,38 @@ function frontBack(value, self) {
   }
   	
 
-  if (value > self.calibration.lon) {
-    //console.log('FRONT');
+  if (value < self.calibration.lon) { //used to be greater than
+    console.log('FRONT');
     //return emitter.emit('front', _scale(value));
     betterthis.goFront = true;
     betterthis.goBack = false;
   }
-  if (value < self.calibration.lon) {
-    //console.log('BACK');
+  if (value > self.calibration.lon) { //used to be less than
+    console.log('BACK');
     //return emitter.emit('back', _scale(value));
     betterthis.goBack = true;
     betterthis.goFront = false;
   }
 }
 
-function leftRight(value, self) { 
+function frontBack(value, self) { //switched with leftRight
   var _scale = _.partial(scale, self.calibration.lat, 80);
 
   if (isSimilar(value, self.calibration.lat)) {
-    //console.log('LEFT-CAL');
+    console.log('LEFT-CAL');
     //return emitter.emit('left', 0);
     betterthis.turnLeft = false;
     betterthis.turnRight = false;
   }
 
-  if (value > self.calibration.lat) {
-    //console.log('LEFT');
+  if (value < self.calibration.lat) { //used to be greater than
+    console.log('LEFT');
     //return emitter.emit('left', _scale(value));
     betterthis.turnLeft = true;
     betterthis.turnRight = false;
   }
-  if (value < self.calibration.lat) {
-    //console.log('RIGHT');
+  if (value > self.calibration.lat) { //used to be less than
+    console.log('RIGHT');
     //return emitter.emit('right', _scale(value));
     betterthis.turnLeft = false;
     betterthis.turnRight = true;
