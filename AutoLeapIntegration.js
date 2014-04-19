@@ -35,26 +35,26 @@ process.on('SIGINT', function() {
 client.takeoff();
 leaper.start();
 client.after(2500, function(){
-    var atGoal = setInterval(function(){
-      if(leaper.manCtrl() == true && manBuffer == false)
-      {
-            console.log('Attempted buffer')
-        var testBuf = setInterval(function() {
-          clearInterval(testBuf);
-          manBuffer =true;
-        }, 200);
-      }
+        var atGoal = setInterval(function(){
+            if(leaper.manCtrl() == true && manBuffer == false)
+            {
+                console.log('Attempted buffer')
+                var testBuf = setInterval(function() {
+                clearInterval(testBuf);
+                manBuffer =true;
+            }, 200);
+        }
         con.update(manBuffer);
         if(manBuffer)
         {
             console.log('manual ctrl');
           if(leaper.isLeft())
           {
-            client.counterClockwise(0.5);
+            client.left(0.1);
           }
           if(leaper.isRight())
           {
-            client.clockwise(0.5);
+            client.right(0.1);
           }
           if(leaper.isFront())
           {

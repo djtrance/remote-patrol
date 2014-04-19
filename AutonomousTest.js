@@ -24,17 +24,17 @@ process.on('SIGINT', function() {
 });
 
 
-
-client.takeoff();
-
-con.front(5, .1);
-con.left(5, .1);
-
 var goal1 = false;
 
-client.after(2500, function(){
+client.takeoff();
+client.after(2500, function() {
+    //client.calibrate(0);
+    })
+    .after(0, function(){
+    con.front(10, .1);
+    con.left(10, .1);
     var atGoal = setInterval(function(){
-        con.update();
+        con.update(false);
         if(con.shouldKill())
         {
             console.log('Trykill');
