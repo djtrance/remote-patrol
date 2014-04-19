@@ -8,6 +8,7 @@ function Locator (client) {
     this.xLoc = 0;
     this.yLoc = 0;
     this.mag = 0;
+    this.magSet = false;
     this.magOff = 0;
     this.client.on('navdata', function(d) {
         if(d.demo)
@@ -34,12 +35,16 @@ Locator.prototype.processData = function(d) {
     }
     else
     {
-        this.mag = d.demo.clockwiseDegrees*0.0174532925-this.magOff;
-    }
-    if(this.magOff = 0)
-    {
-        this.magOff = this.mag;
-        this.mag = 0;
+        if(this.magSet == false || this.magOff == 0)
+        {
+            this.magSet = true;
+            this.magOff = d.demo.clockwiseDegrees*0.0174532925;
+            this.mag = 0;
+        }
+        else
+        {
+            this.mag = d.demo.clockwiseDegrees*0.0174532925-this.magOff;
+        }
     }
     console.log("Mag: " + this.mag);
 }
