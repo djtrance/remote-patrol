@@ -6,7 +6,9 @@ var client = arDrone.createClient();
 
 
 client.disableEmergency();
-client.config('general:video_enable','TRUE');
+client.config('general:video_enable','FALSE');
+
+var con = new Controller(client);
 
 // Land on ctrl-c
 var exiting = false;
@@ -16,29 +18,37 @@ process.on('SIGINT', function() {
     } else {
         console.log('Got SIGINT. Landing, press Control-C again to force exit.');
         exiting = true;
+        con.kill();
         client.stop();
         client.land();
     }
 });
 
-var con = new Controller(client);
+
 
 client.takeoff();
 
-con.front(1, .3);
-con.left(2, .3);
+con.front(1, .1);
+con.left(2, .1);
 
 var goal1 = false;
 
-client.after(4000, function(){
+client.after(2500, function(){
     var atGoal = setInterval(function(){
         con.update();
+        if(con.shouldKill())
+        {
+            console.log('Trykill');
+            clearInterval(atGoal);
+            client.stop();
+            client.land();
+        }
         if(con.within() && !goal1)
         {
             goal1 = true;
             client.stop();
-            con.back(1, .3);
-            con.right(2, .3);
+            con.back(1, .1);
+            con.right(2, .1);
             console.log("Goal 1 reached, starting second trip");
         }
         else if(con.within() && goal1)
@@ -47,6 +57,6 @@ client.after(4000, function(){
             clearInterval(atGoal);
             client.stop();
             client.land();
-        }   
-    }, 30);
+        }
+    }, 70);
 });
