@@ -1,9 +1,27 @@
 var arDrone = require('ar-drone');
 var client = arDrone.createClient();
 
+var xVel = 0;
+var yVel = 0;
+var zVel = 0;
+var altitude = 0;
+
+client.disableEmergency();
 client.config('general:video_enable','TRUE');
-client.reset();
-client.takeoff();
+client.on('navdata', function(d) {
+        /*if (!this._busy && d.demo) {
+            this._busy = true;
+            self._processNavdata(d);
+            self._control(d);
+            this._busy = false;
+        }*/
+        xVel = d.demo.xVelocity;
+        yVel = d.demo.yVelocity;
+        zVel = d.demo.zVelocity;
+        altitude = d.demo.altitude;
+        console.log("Altitude:" + altitude + " xVel:" + xVel +  " yVel:" + yVel+ " zVel:" + zVel+ "\n");
+    });
+/*client.takeoff();
 
 // Land on ctrl-c
 var exiting = false;
@@ -28,13 +46,13 @@ client.after(1000, function(){
 	this.stop();
 });
 
-console.log(client.navdata.demo.altitude + "\n");
+console.log(altitude + "\n");
 
 var prevalt = client.navdata.demo.altitude;
 var over_edge = false;
 
 var edgeint = setInterval(function(){
-	if(client.navdata.demo.altitude > prevalt + 2000)
+	if(altitude > prevalt + 2000)
 	{
 		over_edge = true;
 		clearInterval(edgeint);
@@ -58,3 +76,4 @@ client.after(10, function(){
 });
 
 //client.on('navdata', console.log);
+*/
