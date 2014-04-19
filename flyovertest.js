@@ -15,13 +15,17 @@ client.on('navdata', function(d) {
             self._control(d);
             this._busy = false;
         }*/
-        xVel = d.demo.xVelocity;
-        yVel = d.demo.yVelocity;
-        zVel = d.demo.zVelocity;
-        altitude = d.demo.altitude;
-        console.log("Altitude:" + altitude + " xVel:" + xVel +  " yVel:" + yVel+ " zVel:" + zVel+ "\n");
+        if(d.demo)
+        {
+        	xVel = d.demo.xVelocity;
+        	yVel = d.demo.yVelocity;
+        	zVel = d.demo.zVelocity;
+        	altitude = d.demo.altitude;
+        	console.log("Altitude:" + altitude + " xVel:" + xVel +  " yVel:" + yVel+ " zVel:" + zVel+ "\n");
+        }
+
     });
-/*client.takeoff();
+client.takeoff();
 
 // Land on ctrl-c
 var exiting = false;
@@ -31,8 +35,8 @@ process.on('SIGINT', function() {
         process.exit(0);
     } else {
     	client.stop();
-    	client.back(1);
-    	client.after(1000, function(){
+    	client.back(.1);
+    	client.after(5000, function(){
     		console.log('Got SIGINT. Landing, press Control-C again to force exit.');
         	exiting = true;
         	client.stop();
@@ -41,14 +45,8 @@ process.on('SIGINT', function() {
 
     }
 });
-client.up(1);
-client.after(1000, function(){
-	this.stop();
-});
 
-console.log(altitude + "\n");
-
-var prevalt = client.navdata.demo.altitude;
+var prevalt = altitude;
 var over_edge = false;
 
 var edgeint = setInterval(function(){
@@ -59,21 +57,25 @@ var edgeint = setInterval(function(){
 	}
 },300);
 
-client.forward(.5);
-client.after(10, function(){
+client.up(.5);
+client.after(2000, function(){
+	this.stop();
+})
+	.after(2000, function(){
+	this.front(.3);	
+})
+	.after(10, function(){
 	var forint = setInterval(function(){
 		if(over_edge)
 		{
+			clearInterval(forint);
 			client.stop();
-			client.back(1);
-			client.after(1000, function() {
+			client.back(.2).after(1000, function() {
 				client.stop();
 				client.land();
-				clearInterval(forint);
 			});
 		}
 	})
 });
 
 //client.on('navdata', console.log);
-*/
