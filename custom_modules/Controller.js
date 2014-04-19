@@ -8,14 +8,14 @@ function Controller (client) {
 	this.yGoal = 0;
 	this.xSpeed = 0;
 	this.ySpeed = 0;
-	this.tol = .5;
+	this.tol = .01;
 }
 
 Controller.prototype.update = function() {
 	this.loc.updatePos();
 	if(!this.xGood)
 	{
-		if(this.loc.x < this.xGoal) {
+		if(this.loc.xLoc < this.xGoal) {
 			this.client.front(xSpeed);
 		}
 		else {
@@ -27,7 +27,7 @@ Controller.prototype.update = function() {
 	}
 	if(!this.yGood)
 	{
-		if(this.loc.y < this.yGoal) {
+		if(this.loc.yLoc < this.yGoal) {
 			this.client.right(ySpeed);
 		}
 		else {
@@ -40,11 +40,11 @@ Controller.prototype.update = function() {
 }
 
 Controller.prototype.xGood = function () {
-	return (this.loc.x - this.tol < this.xGoal && this.loc.x + this.tol > this.xGoal);
+	return (this.loc.xLoc - this.tol < this.xGoal && this.loc.xLoc + this.tol > this.xGoal);
 }
 
 Controller.prototype.yGood = function () {
-	return (this.loc.y - this.tol < this.yGoal && this.loc.y + this.tol > this.yGoal);
+	return (this.loc.yLoc - this.tol < this.yGoal && this.loc.yLoc + this.tol > this.yGoal);
 }
 
 Controller.prototype.within = function() {
