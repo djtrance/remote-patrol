@@ -3,7 +3,7 @@
 var leap = require('./leap-fly/node_modules/leapjs');
 var _ = require('./leap-fly/node_modules/underscore');
 var direction = require('./leap-fly/node_modules/curtsy');
-
+var betterthis = LeapForAuto;
 
 /*
 module.exports.manCtrl = manCtrl;
@@ -17,18 +17,19 @@ module.exports.start = start;
 */
 function LeapForAuto() {
   this.calibration = null;
-  this.flying = true;
+  this.flying = false;
   this.controller;
   //this.client
   //this.animateProgress;
-  this.takenOff = true;
-  this.takeControl = false;
-  this.turnLeft = false;
-  this.turnRight = false;
-  this.goUp = false;
-  this.goDown = false;
-  this.goFront = false;
-  this.goBack = false;
+  this.takenOff = false;
+  this.takeControl;
+  this.turnLeft;
+  this.turnRight;
+  this.goUp;
+  this.goDown;
+  this.goFront;
+  this.goBack;
+  this.takeControl=false;
 }
 module.exports = LeapForAuto;
 
@@ -56,29 +57,38 @@ var animations = [
   'flipRight'
 ];*/
 
+
 LeapForAuto.prototype.manCtrl = function(){
-	return this.takeControl;
+  //console.log("tested control " + betterthis.takeControl + " " + betterthis);
+	return betterthis.takeControl;
 }
 LeapForAuto.prototype.isLeft = function(){
-	return this.turnLeft;
+	return betterthis.turnLeft;
 }
 LeapForAuto.prototype.isRight = function(){
-	return this.turnRight;
+	return betterthis.turnRight;
 }
 LeapForAuto.prototype.isUp = function(){
-	return this.goUp;
+	return betterthis.goUp;
 }
 LeapForAuto.prototype.isDown = function(){
-	return this.goDown;
+	return betterthis.goDown;
 }
 LeapForAuto.prototype.isFront = function(){
-	return this.goFront;
+	return betterthis.goFront;
 }
 LeapForAuto.prototype.isBack = function(){
-	return this.goBack;
+	return betterthis.goBack;
 }
 
 LeapForAuto.prototype.start = function(frameType) {
+  
+  this.turnLeft=false;
+  this.turnRight=false;
+  this.goUp=false;
+  this.goDown=false;
+  this.goFront=false;
+  this.goBack=false;
   frameType = frameType || 'deviceFrame';
   this.controller = new leap.Controller({
     frameEventName: frameType,
@@ -96,20 +106,23 @@ LeapForAuto.prototype.processFrame = function(frame) {
   
   //console.log(frame.hands[0]);
 
-  if (frame.hands.length > 0 && !this.flying && !this.takenOff) {
+  if (frame.hands.length > 0 && !betterthis.flying && !betterthis.takenOff) {
     //console.log('OVERRIDE');
-    this.takenOff = true;
-    this.takeControl = true;
+    //console.log(betterthis);
+    betterthis.takenOff = true;
+    betterthis.takeControl = true;
+    //console.log("Set control " + betterthis.takeControl);
+    //console.log("Get control " + manCtrl());
     //emitter.emit('takeoff');
-    this.resetCalibration();
+    resetCalibration(this);
   }
 
-  if (frame.hands.length === 0 && this.flying && this.takenOff) //if flying and hands are absent
+  if (frame.hands.length === 0 && betterthis.flying && betterthis.takenOff) //if flying and hands are absent
   {
     //emitter.emit('land');
-    this.takeControl = false;
-    console.log('Release');
-    this.takenOff = false;
+    betterthis.takeControl = false;
+    //console.log('Release');
+    betterthis.takenOff = false;
   }
 
 
@@ -118,14 +131,14 @@ LeapForAuto.prototype.processFrame = function(frame) {
 
   //if (animate(punch)) return;
   if (!hand){
-    this.manCtrl = false;
-    this.takenOff = false;
+    betterthis.manCtrl = false;
+    betterthis.takenOff = false;
     return;
   } 
-  if (!this.calibration) return this.calibrate(frame, this);
+  if (!this.calibration) return calibrate(frame, this);
 
-  if (this.flying === false) return;
-  this.control(hand, this);
+  if (betterthis.flying === false) return;
+  control(hand, this);
 }
 
 function control(hand, self) {
@@ -147,10 +160,10 @@ function registerClient(drone) {
 
 function calibrate(frame, self) {
   if (frame.hands.length !== 1) return;
-  if (!self.calibrate._first) return (self.calibrate._first = frame);
-  if ((frame.id - self.calibrate._first.id) < 150) return;
+  if (!calibrate._first) return (calibrate._first = frame);
+  if ((frame.id - calibrate._first.id) < 150) return;
   var hand = frame.hands[0];
-  self.calibrate._first = null;
+  calibrate._first = null;
 
   self.calibration = {
     ver: normaliseCm(hand.palmPosition[1]),
@@ -164,7 +177,7 @@ function calibrate(frame, self) {
 
 function resetCalibration(self) {
   self.calibration = null;
-  self.calibrate._first = null;
+  //self.calibrate._first = null;
   //console.log('--- calibration reset');
 }
 
@@ -194,23 +207,23 @@ function frontBack(value, self) {
 
   if (isSimilar(value, self.calibration.lon)) {
   	//return emitter.emit('front', 0);
-  	console.log("StopFront");
-  	self.goBack = false;
-  	self.goFront = false;
+  	//console.log("StopFront");
+  	betterthis.goBack = false;
+  	betterthis.goFront = false;
   }
   	
 
   if (value > self.calibration.lon) {
-    console.log('FRONT');
+    //console.log('FRONT');
     //return emitter.emit('front', _scale(value));
-    self.goFront = true;
-    self.goBack = false;
+    betterthis.goFront = true;
+    betterthis.goBack = false;
   }
   if (value < self.calibration.lon) {
-    console.log('BACK');
+    //console.log('BACK');
     //return emitter.emit('back', _scale(value));
-    self.goBack = true;
-    self.goFront = false;
+    betterthis.goBack = true;
+    betterthis.goFront = false;
   }
 }
 
@@ -218,23 +231,23 @@ function leftRight(value, self) {
   var _scale = _.partial(scale, self.calibration.lat, 80);
 
   if (isSimilar(value, self.calibration.lat)) {
-    console.log('LEFT-CAL');
+    //console.log('LEFT-CAL');
     //return emitter.emit('left', 0);
-    self.turnLeft = false;
-    self.turnRight = false;
+    betterthis.turnLeft = false;
+    betterthis.turnRight = false;
   }
 
   if (value > self.calibration.lat) {
-    console.log('LEFT');
+    //console.log('LEFT');
     //return emitter.emit('left', _scale(value));
-    self.turnLeft = true;
-    self.turnRight = false;
+    betterthis.turnLeft = true;
+    betterthis.turnRight = false;
   }
   if (value < self.calibration.lat) {
-    console.log('RIGHT');
+    //console.log('RIGHT');
     //return emitter.emit('right', _scale(value));
-    self.turnLeft = false;
-    self.turnRight = true;
+    betterthis.turnLeft = false;
+    betterthis.turnRight = true;
   }
 }
 
