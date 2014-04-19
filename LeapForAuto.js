@@ -1,25 +1,62 @@
 /*jshint boss: true */
 
-var leap = require('leapjs');
-var _ = require('underscore');
-var direction = require('curtsy');
-var EventEmitter = require('events').EventEmitter;
+var leap = require('./leap-fly/node_modules/leapjs');
+var _ = require('./leap-fly/node_modules/underscore');
+var direction = require('./leap-fly/node_modules/curtsy');
 
-var emitter = new EventEmitter();
-module.exports = emitter;
 
-var controller, client, flying, animateProgress;
+
+module.exports.manCtrl = manCtrl;
+module.exports.isLeft = isLeft;
+module.exports.isRight = isRight;
+module.exports.isUp = isUp;
+module.exports.isDown = isDown;
+module.exports.isFront = isFront;
+module.exports.isBack = isBack;
+module.exports.start = start;
+
+var controller, client, animateProgress;
 
 // calibrate the 1st time there is a hand
 var calibration = null;
+var flying = true;
 
-var takenOff = false;
+var takenOff = true;
+var takeControl = false;
+var turnLeft = false;
+var turnRight = false;
+var goUp = false;
+var goDown = false;
+var goFront = false;
+var goBack = false;
 
 // animationTypes
 var animations = [
   'flipLeft',
   'flipRight'
 ];
+
+function manCtrl() {
+	return takeControl;
+}
+function isLeft() {
+	return turnLeft;
+}
+function isRight() {
+	return turnRight;
+}
+function isUp() {
+	return goUp;
+}
+function isDown() {
+	return goDown;
+}
+function isFront() {
+	return goFront;
+}
+function isBack() {
+	return goBack;
+}
 
 function start(frameType) {
   frameType = frameType || 'deviceFrame';
@@ -34,29 +71,33 @@ function start(frameType) {
 function processFrame(frame) {
   if (!frame.valid) return;
 
-  var circleGest = getGesture(frame.gestures, 'circle');
-  //if (circleGest && checkGesture(circleGest)) return takeoffOrLand(circleGest);
+  var hand = frame.hands[0]; //one hand
+  //var punch = frame.hands[1]; //two hands
+  
+  //console.log(frame.hands[0]);
 
   if (frame.hands.length > 0 && !flying && !takenOff) {
-    console.log('TAKEOFF');
+    //console.log('OVERRIDE');
     takenOff = true;
-    emitter.emit('takeoff');
+    takeControl = true;
+    //emitter.emit('takeoff');
     resetCalibration();
   }
-  if (frame.hands.length !== 1 && flying && takenOff) //if flying and hands are absent
+
+  if (frame.hands.length === 0 && flying && takenOff) //if flying and hands are absent
   {
-    emitter.emit('land');
-    console.log('LAND');
+    //emitter.emit('land');
+    takeControl = false;
+    console.log('Release');
     takenOff = false;
   }
 
 
 
-  var hand = frame.hands[0];
-  var punch = frame.hands[1];
 
-  if (animate(punch)) return;
-  if (!hand) return hover();
+
+  //if (animate(punch)) return;
+  //if (!hand) return hover();
   if (!calibration) return calibrate(frame);
 
   if (flying === false) return;
@@ -66,17 +107,18 @@ function processFrame(frame) {
 function control(hand) {
   frontBack(normalise(hand.palmNormal[2]));
   leftRight(normalise(hand.palmNormal[0]));
-  turn(normaliseCm(hand.palmPosition[0]));
-  upDown(normaliseCm(hand.palmPosition[1]));
+  //turn(normaliseCm(hand.palmPosition[0]));
+  //upDown(normaliseCm(hand.palmPosition[1]));
 }
 
+/*
 function registerClient(drone) {
   client = drone;
   client.config('general:navdata_demo', 'FALSE');
   client.on('navdata', function (navdata) {
     flying = !!navdata.droneState.flying;
   });
-}
+}*/
 
 
 function calibrate(frame) {
@@ -115,50 +157,36 @@ function getGesture(gestures, type) {
   if (index > -1) return gestures[index];
 }
 
-/*function takeoffOrLand(gesture) {
-  //var dir = direction(gesture).type;
-  if (dir === 'clockwise' && !flying) {
-    emitter.emit('takeoff');
-    resetCalibration();
-  } else if (dir === 'counter-clockwise' && flying) {
-    emitter.emit('land');
-  }
-}*/
-
-function takeoffOrLand(gesture) {
-  var dir = direction(gesture).type;
-  //if (dir === 'clockwise' && !flying) {
-  if (frame.hands.length > 0 && !flying) {
-    console.log('TAKEOFF');
-    //emitter.emit('takeoff');
-    resetCalibration();
-  }
-  else if (frame.hands.length !== 1 && flying) //if flying and hands are absent
-  {
-    //emitter.emit('land');
-    console.log('LAND');
-  }
-}
-
-
+/*
 function hover () {
   //emitter.emit('stop');
   //console.log('HOVER');
   resetCalibration();
-}
+}*/
 
 // TODO: frontBack/leftRight can be partially applied into 1 function!
 function frontBack(value) {
   var _scale = _.partial(scale, calibration.lon, 80);
 
-  if (isSimilar(value, calibration.lon)) return emitter.emit('front', 0);
+  if (isSimilar(value, calibration.lon)) {
+  	//return emitter.emit('front', 0);
+  	console.log("StopFront");
+  	goBack = false;
+  	goFront = false;
+  }
+  	
+
   if (value > calibration.lon) {
     console.log('FRONT');
-    return emitter.emit('front', _scale(value));
+    //return emitter.emit('front', _scale(value));
+    goFront = true;
+    goBack = false;
   }
   if (value < calibration.lon) {
     console.log('BACK');
-    return emitter.emit('back', _scale(value));
+    //return emitter.emit('back', _scale(value));
+    goBack = true;
+    goFront = false;
   }
 }
 
@@ -167,16 +195,22 @@ function leftRight(value) {
 
   if (isSimilar(value, calibration.lat)) {
     console.log('LEFT-CAL');
-    return emitter.emit('left', 0);
+    //return emitter.emit('left', 0);
+    turnLeft = false;
+    turnRight = false;
   }
 
   if (value > calibration.lat) {
     console.log('LEFT');
-    return emitter.emit('left', _scale(value));
+    //return emitter.emit('left', _scale(value));
+    turnLeft = true;
+    turnRight = false;
   }
   if (value < calibration.lat) {
     console.log('RIGHT');
-    return emitter.emit('right', _scale(value));
+    //return emitter.emit('right', _scale(value));
+    turnLeft = false;
+    turnRight = true;
   }
 }
 
@@ -184,28 +218,30 @@ function upDown(value) {
   var _scale = _.partial(scale, calibration.ver, 20);
 
   if (isSimilar(value, calibration.ver, 5)) {
-    console.log('UP-CAL');
-    return emitter.emit('up', 0);
+    //console.log('UP-CAL');
+    //return emitter.emit('up', 0);
   }
 
   if (value > calibration.ver) {
-    console.log('UP');
-    return emitter.emit('up', _scale(value, true));
+    //console.log('UP');
+    //return emitter.emit('up', _scale(value, true));
   }
   if (value < calibration.ver) {
-    console.log('DOWN');
-    return emitter.emit('down', _scale(value, true));
+    //console.log('DOWN');
+    //return emitter.emit('down', _scale(value, true));
   }
 }
 
+/*
 function turn(value) {
   var _scale = _.partial(scale, calibration.hor, 20);
 
   if (isSimilar(value, calibration.hor, 5)) return emitter.emit('clockwise', 0);
   if (value > calibration.hor) return emitter.emit('clockwise', _scale(value, true));
   if (value < calibration.hor) return emitter.emit('counterClockwise', _scale(value, true));
-}
+}*/
 
+/*
 function animate(punch) {
   if (punch && normaliseCm(punch.palmVelocity[2]) < -100 && !animateProgress) {
     animateProgress = true;
@@ -213,13 +249,10 @@ function animate(punch) {
     emitter.emit('animate', animations[0], 500);
     return true;
   }
-}
+}*/
 
 
 // expose methods
-emitter._getGesture = getGesture;
-emitter.start = start;
-emitter.registerClient = registerClient;
 
 function isSimilar(value, compare, tolerance) {
   tolerance = tolerance || 15;

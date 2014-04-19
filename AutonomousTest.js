@@ -6,7 +6,6 @@ var client = arDrone.createClient();
 
 
 client.disableEmergency();
-client.config('general:video_enable','FALSE');
 
 var con = new Controller(client);
 
@@ -16,7 +15,7 @@ process.on('SIGINT', function() {
     if (exiting) {
         process.exit(0);
     } else {
-        console.log('Got SIGINT. Landing, press Control-C again to force exit.');
+        console.log('\nGot SIGINT. Landing, press Control-C again to force exit.');
         exiting = true;
         con.kill();
         client.stop();

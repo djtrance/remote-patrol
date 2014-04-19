@@ -8,14 +8,45 @@ function Controller (client) {
 	this.yGoal = 0;
 	this.xSpeed = 0;
 	this.ySpeed = 0;
-	this.tol = .01;
+	this.tol = 0.1;
 	this.radtol = 0.1;
 	this.shouldDie = false;
 }
 
-Controller.prototype.update = function() {
+Controller.prototype.update = function(manual) {
 	this.loc.updatePos();
 	console.log("Curr Angle:" + this.loc.mag + " Correct Angle:" + this.getCorrAng());
+	if(!manual)
+	{
+		if(!this.within())
+		{
+			if(!this.angGood())
+			{
+				this.client.front(0);
+				var ang = getCorrAng();
+				if(ang > 1.57 && mag < -1.57)
+				{
+					this.client.counterClockwise(0.5);
+				}
+				else if(ang < -1.57 && mag > 1.57)
+				{
+					this.client.clockwise(0.5);
+				}
+				else if(mag > ang)
+				{
+					this.client.counterClockwise(0.5);
+				}
+				else
+				{
+					this.client.clockwise(0.5);
+				}
+			}
+			else {
+				this.client.clockwise(0);
+				this.client.front(0.1);
+			}
+		}
+	}
 	/*
 	if(!this.xGood)
 	{
