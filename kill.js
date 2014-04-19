@@ -31,4 +31,4 @@ setTimeout(function() {
 
 setTimeout(function() {
   emergency=false;
-}, 1000);
+}, 700);
