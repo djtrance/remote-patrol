@@ -1,8 +1,9 @@
-require('./Locator');
+var Locator = require('./Locator');
 
+module.exports = Controller;
 function Controller (client) {
 	this.loc = new Locator(client);
-	this.client = locator.client;
+	this.client = client;
 	this.xGoal = 0;
 	this.yGoal = 0;
 	this.xSpeed = 0;
@@ -14,7 +15,7 @@ Controller.prototype.update = function() {
 	this.loc.updatePos();
 	if(!this.xGood)
 	{
-		if(loc.x < loc.xGoal) {
+		if(this.loc.x < this.xGoal) {
 			this.client.front(xSpeed);
 		}
 		else {
@@ -26,7 +27,7 @@ Controller.prototype.update = function() {
 	}
 	if(!this.yGood)
 	{
-		if(loc.y < loc.yGoal) {
+		if(this.loc.y < this.yGoal) {
 			this.client.right(ySpeed);
 		}
 		else {
@@ -39,11 +40,11 @@ Controller.prototype.update = function() {
 }
 
 Controller.prototype.xGood = function () {
-	return (loc.x - this.tol < this.xGoal && loc.x + this.tol > this.xGoal);
+	return (this.loc.x - this.tol < this.xGoal && this.loc.x + this.tol > this.xGoal);
 }
 
 Controller.prototype.yGood = function () {
-	return (loc.y - this.tol < this.yGoal && loc.y + this.tol > this.yGoal);
+	return (this.loc.y - this.tol < this.yGoal && this.loc.y + this.tol > this.yGoal);
 }
 
 Controller.prototype.within = function() {

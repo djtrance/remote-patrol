@@ -1,3 +1,4 @@
+module.exports = Locator;
 function Locator (client) {
 	this.client = client;
 	this.xVel = 0;
