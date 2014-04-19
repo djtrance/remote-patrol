@@ -13,6 +13,8 @@ var controller, client, flying, animateProgress;
 // calibrate the 1st time there is a hand
 var calibration = null;
 
+var takenOff = false;
+
 // animationTypes
 var animations = [
   'flipLeft',
@@ -32,8 +34,23 @@ function start(frameType) {
 function processFrame(frame) {
   if (!frame.valid) return;
 
-  //var circleGest = getGesture(frame.gestures, 'circle');
+  var circleGest = getGesture(frame.gestures, 'circle');
   //if (circleGest && checkGesture(circleGest)) return takeoffOrLand(circleGest);
+
+  if (frame.hands.length > 0 && !flying && !takenOff) {
+    console.log('TAKEOFF');
+    takenOff = true;
+    emitter.emit('takeoff');
+    resetCalibration();
+  }
+  else if (frame.hands.length !== 1/* && flying*/ && takenOff) //if flying and hands are absent
+  {
+    emitter.emit('land');
+    console.log('LAND');
+    takenOff === false;
+  }
+
+
 
   var hand = frame.hands[0];
   var punch = frame.hands[1];
@@ -99,7 +116,7 @@ function getGesture(gestures, type) {
 }
 
 /*function takeoffOrLand(gesture) {
-  var dir = direction(gesture).type;
+  //var dir = direction(gesture).type;
   if (dir === 'clockwise' && !flying) {
     emitter.emit('takeoff');
     resetCalibration();
@@ -108,22 +125,26 @@ function getGesture(gestures, type) {
   }
 }*/
 
-function hover () {
-  if (dir === 'clockwise' && !flying)
-  emitter.emit('stop');
-  //console.log('HOVER');
-  resetCalibration();
-}
-
-function takeoffOrLand () {
-  if (!flying && direction(gesture).type === 'clockwise') {
-    emitter.emit('takeoff');
+function takeoffOrLand(gesture) {
+  var dir = direction(gesture).type;
+  //if (dir === 'clockwise' && !flying) {
+  if (frame.hands.length > 0 && !flying) {
+    console.log('TAKEOFF');
+    //emitter.emit('takeoff');
     resetCalibration();
   }
-  else if (flying && frame.hands.length !== 1) //if flying and hands are absent
+  else if (frame.hands.length !== 1 && flying) //if flying and hands are absent
   {
-    emitter.emit('land');
+    //emitter.emit('land');
+    console.log('LAND');
   }
+}
+
+
+function hover () {
+  //emitter.emit('stop');
+  //console.log('HOVER');
+  resetCalibration();
 }
 
 // TODO: frontBack/leftRight can be partially applied into 1 function!
@@ -135,7 +156,7 @@ function frontBack(value) {
   if (value < calibration.lon) return emitter.emit('back', _scale(value));
 }
 
-function leftRight(value) {
+function leftRight(value) { 
   var _scale = _.partial(scale, calibration.lat, 80);
 
   if (isSimilar(value, calibration.lat)) return emitter.emit('left', 0);
