@@ -28,8 +28,8 @@ process.on('SIGINT', function() {
 
 client.takeoff();
 
-con.front(1, .1);
-con.left(2, .1);
+con.front(5, .1);
+con.left(5, .1);
 
 var goal1 = false;
 

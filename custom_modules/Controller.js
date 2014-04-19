@@ -9,11 +9,14 @@ function Controller (client) {
 	this.xSpeed = 0;
 	this.ySpeed = 0;
 	this.tol = .01;
+	this.radtol = 0.1;
 	this.shouldDie = false;
 }
 
 Controller.prototype.update = function() {
 	this.loc.updatePos();
+	console.log("Curr Angle:" + this.loc.mag + " Correct Angle:" + this.getCorrAng());
+	/*
 	if(!this.xGood)
 	{
 		if(this.loc.xLoc < this.xGoal) {
@@ -37,7 +40,18 @@ Controller.prototype.update = function() {
 	}
 	else {
 		this.client.left(0);
-	}
+	}*/
+}
+
+Controller.prototype.getCorrAng = function() {
+	console.log((this.yGoal - this.loc.yLoc) + " " + (this.xGoal - this.loc.xLoc));
+	return Math.atan2((this.yGoal - this.loc.yLoc), (this.xGoal - this.loc.xLoc));
+}
+
+Controller.prototype.angGood = function() {
+	var currAng = this.loc.mag;
+	var corrAng = this.getCorrAng();
+	return (currAng - this.radtol < corrAng && currAng + this.radtol > corrAng);
 }
 
 Controller.prototype.xGood = function () {
