@@ -8,7 +8,7 @@ function Controller (client) {
 	this.yGoal = 0;
 	this.xSpeed = 0;
 	this.ySpeed = 0;
-	this.tol = 3;
+	this.tol = 1;
 	this.radtol = 0.1;
 	this.shouldDie = false;
 }
@@ -20,67 +20,110 @@ Controller.prototype.update = function(manual) {
 	{
 		if(!this.within())
 		{
+			var mag = this.loc.mag;
+			if(mag < -Math.PI)
+			{
+				mag += 2*Math.PI;
+			}
+			else if(mag > Math.PI)
+			{
+				mag -= 2*Math.PI;
+			}
 			if(!this.angGood())
 			{
-				this.client.front(0);
+				this.client.stop(0);
+				if(this.loc.xVel>0)
+				{
+					this.client.back(0.05);
+				}
+				else if(this.loc.xVel<0)
+				{
+					this.client.front(0.05);
+				}
+				if(this.loc.yVel>0)
+				{
+					this.client.left(0.05);
+				}
+				else if(this.loc.yVel<0)
+				{
+					this.client.right(0.05);
+				}
 				var ang = this.getCorrAng();
-				if(ang > 1.57 && this.mag < -1.57)
+				var speed = Math.abs(ang - mag);
+				if(speed>1) speed = 1;
+				if(ang > 1.57 && mag < -1.57)
 				{
-					this.client.counterClockwise(0.5);
+					console.log("must turn count with speed " +speed);
+					this.client.counterClockwise(speed);
 				}
-				else if(ang < -1.57 && this.mag > 1.57)
+				else if(ang < -1.57 && mag > 1.57)
 				{
-					this.client.clockwise(0.5);
+					console.log("must turn clock with speed " +speed);
+					this.client.clockwise(speed);
 				}
-				else if(this.mag > ang)
+				else if(mag > ang)
 				{
-					this.client.counterClockwise(0.5);
+					console.log("must turn count with speed " +speed);
+					this.client.counterClockwise(speed);
 				}
 				else
 				{
-					this.client.clockwise(0.5);
+					console.log("must turn clock with speed " +speed);
+					this.client.clockwise(speed);
 				}
 			}
 			else {
-				this.client.clockwise(0);
+				this.client.stop(0);
 				this.client.front(0.1);
 			}
+			/*
+			if(!this.xGood)
+			{
+				if(this.loc.xLoc < this.xGoal) {
+					this.client.front(xSpeed);
+				}
+				else {
+					this.client.back(xSpeed);
+				}
+			}
+			else {
+				this.client.front(0);
+			}
+			if(!this.yGood)
+			{
+				if(this.loc.yLoc < this.yGoal) {
+					this.client.right(ySpeed);
+				}
+				else {
+					this.client.left(ySpeed);
+				}
+			}
+			else {
+				this.client.left(0);
+			}*/
+		}
+		else
+		{
+			this.client.stop(0);
 		}
 	}
-	/*
-	if(!this.xGood)
-	{
-		if(this.loc.xLoc < this.xGoal) {
-			this.client.front(xSpeed);
-		}
-		else {
-			this.client.back(xSpeed);
-		}
-	}
-	else {
-		this.client.front(0);
-	}
-	if(!this.yGood)
-	{
-		if(this.loc.yLoc < this.yGoal) {
-			this.client.right(ySpeed);
-		}
-		else {
-			this.client.left(ySpeed);
-		}
-	}
-	else {
-		this.client.left(0);
-	}*/
 }
 
 Controller.prototype.getCorrAng = function() {
-	console.log((this.yGoal - this.loc.yLoc) + " " + (this.xGoal - this.loc.xLoc));
+	//console.log((this.yGoal - this.loc.yLoc) + " " + (this.xGoal - this.loc.xLoc));
 	return Math.atan2((this.yGoal - this.loc.yLoc), (this.xGoal - this.loc.xLoc));
 }
 
 Controller.prototype.angGood = function() {
 	var currAng = this.loc.mag;
+	if(currAng < -Math.PI)
+	{
+		currAng += 2*Math.PI;
+	}
+	else if(currAng > Math.PI)
+	{
+		currAng -= 2*Math.PI;
+	}
 	var corrAng = this.getCorrAng();
 	return (currAng - this.radtol < corrAng && currAng + this.radtol > corrAng);
 }

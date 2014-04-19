@@ -24,17 +24,17 @@ process.on('SIGINT', function() {
 });
 
 
-
-client.takeoff();
-
-con.front(5, .1);
-con.left(5, .1);
-
 var goal1 = false;
 
-client.after(2500, function(){
+client.takeoff();
+client.after(2500, function() {
+    //client.calibrate(0);
+    })
+    .after(0, function(){
+    con.front(10, .1);
+    con.left(10, .1);
     var atGoal = setInterval(function(){
-        con.update();
+        con.update(false);
         if(con.shouldKill())
         {
             console.log('Trykill');
@@ -44,11 +44,16 @@ client.after(2500, function(){
         }
         if(con.within() && !goal1)
         {
-            goal1 = true;
-            client.stop();
-            con.back(1, .1);
-            con.right(2, .1);
-            console.log("Goal 1 reached, starting second trip");
+            /*console.log("Goal1 reached - holding for confirmation");
+            setTimeout(function(){
+                if(con.within() && goal1 == false)
+                {*/
+                    goal1 = true;
+                    client.stop();
+                    con.goHome();
+                    console.log("Goal 1 reached, starting second trip");
+                /*}
+            }, 1000);*/
         }
         else if(con.within() && goal1)
         {
