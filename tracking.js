@@ -5,13 +5,13 @@ var cv = require('opencv');
 var client = arDrone.createClient();
 
 var http = require('http');
-
-
+var vid = new cv.VideoCapture(0);
 
 if(client != null)
 {
     client.stop();
     var pngStream = arDrone.createClient().getPngStream();
+    require('ar-drone-png-stream')(client, { port: 8000 });
 
     console.log('Connecting png stream ...');
 
@@ -37,17 +37,33 @@ if(client != null)
           console.log('Serving latest png on port 8080 ...');
     });
 
+    if(lastPng)
+    {
+        var col = lastPng.width;
+        var rows = lastPng.height;
+        var data_type = jsfeat.F32_t | jsfeat.C3_t;
+        var png_buffer = lastPng.data;
+        var jsfeat_mat = new jsfeat.matrix_t(col, rows, data_type, png_buffer);
+    }
+
 }
 else
 {
     var vid = new cv.VideoCapture(0);
     var mat;
 
-    var window = NamedWindow.New("Video Stream");
+    var window1 = new cv.NamedWindow("Video Stream reg", 0);
+//    var window2 = new cv.NamedWindow("Video Stream face", 0);
 
-    vid.read(function(err, im){
-        window.show(im);
-    });
+    var callback = function(){
+        vid.read(function(err, im){
+        if(im)
+            window1.show(im);
+
+
+      });
+    }
+    setTimeout(callback(), 500);
 }
 // When opening a file, the full path must be passed to opencv
 /*
