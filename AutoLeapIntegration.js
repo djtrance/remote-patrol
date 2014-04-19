@@ -2,6 +2,7 @@ var Controller = require('./custom_modules/Controller');
 var Locator = require('./custom_modules/Locator');
 var LeapForAuto = require('./LeapForAuto');
 var manBuffer = false;
+var leaper = new LeapForAuto();
 
 var arDrone = require('ar-drone');
 var client = arDrone.createClient();
@@ -33,10 +34,10 @@ process.on('SIGINT', function() {
 });
 
 client.takeoff();
-LeapForAuto.start();
+leaper.start();
 client.after(2500, function(){
     var atGoal = setInterval(function(){
-    	if(LeapForAuto.manCtrl() == true && manBuffer == false)
+    	if((leaper.manCtrl() == true) && (manBuffer == false))
     	{
             console.log('Attempted buffer')
     		var testBuf = setInterval(function() {
@@ -48,23 +49,23 @@ client.after(2500, function(){
         if(manBuffer)
         {
             console.log('manual ctrl');
-        	if(LeapForAuto.isLeft())
+        	if(leaper.isLeft())
         	{
         		client.counterClockwise(0.5);
         	}
-        	if(LeapForAuto.isRight())
+        	if(leaper.isRight())
         	{
         		client.clockwise(0.5);
         	}
-        	if(LeapForAuto.isFront())
+        	if(leaper.isFront())
         	{
         		client.front(0.1);
         	}
-        	if(LeapForAuto.isBack())
+        	if(leaper.isBack())
         	{
         		client.back(0.1);
         	}
-        	if(!LeapForAuto.manCtrl())
+        	if(!leaper.manCtrl())
         	{
         		manBuffer = false;
         	}
@@ -76,7 +77,7 @@ client.after(2500, function(){
             client.stop();
             client.land();
         }
-        if(con.within() && LeapForAuto.manCtrl() == false)
+        if(con.within() && leaper.manCtrl() == false)
         {
             goal1 = true;
             client.stop();
