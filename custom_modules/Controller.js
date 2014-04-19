@@ -20,10 +20,25 @@ Controller.prototype.update = function(manual) {
 	{
 		if(!this.within())
 		{
-			var mag = this.loc.mag;
-			/*if(!this.angGood())
+			if(!this.angGood())
 			{
 				this.client.stop(0);
+				if(this.loc.xVel>0)
+				{
+					this.client.back(0.05);
+				}
+				else if(this.loc.xVel<0)
+				{
+					this.client.front(0.05);
+				}
+				if(this.loc.yVel>0)
+				{
+					this.client.left(0.05);
+				}
+				else if(this.loc.yVel<0)
+				{
+					this.client.right(0.05);
+				}
 				var ang = this.getCorrAng();
 				var speed = Math.abs(ang - this.loc.mag);
 				console.log("must turn with speed " +speed);
@@ -49,7 +64,7 @@ Controller.prototype.update = function(manual) {
 				this.client.stop(0);
 				this.client.front(0.1);
 			}
-			*/
+			/*
 			if(!this.xGood)
 			{
 				if(this.loc.xLoc < this.xGoal) {
@@ -73,7 +88,7 @@ Controller.prototype.update = function(manual) {
 			}
 			else {
 				this.client.left(0);
-			}
+			}*/
 		}
 	}
 }
