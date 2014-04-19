@@ -34,7 +34,12 @@ function start(frameType) {
 function processFrame(frame) {
   if (!frame.valid) return;
 
-  var circleGest = getGesture(frame.gestures, 'circle');
+  var hand = frame.hands[0]; //one hand
+  var punch = frame.hands[1]; //two hands
+  
+  //console.log(frame.hands[0]);
+
+  //var circleGest = getGesture(frame.gestures, 'circle');
   //if (circleGest && checkGesture(circleGest)) return takeoffOrLand(circleGest);
 
   if (frame.hands.length > 0 && !flying && !takenOff) {
@@ -43,6 +48,7 @@ function processFrame(frame) {
     emitter.emit('takeoff');
     resetCalibration();
   }
+
   if (frame.hands.length !== 1 && flying && takenOff) //if flying and hands are absent
   {
     emitter.emit('land');
@@ -52,8 +58,7 @@ function processFrame(frame) {
 
 
 
-  var hand = frame.hands[0];
-  var punch = frame.hands[1];
+
 
   if (animate(punch)) return;
   if (!hand) return hover();

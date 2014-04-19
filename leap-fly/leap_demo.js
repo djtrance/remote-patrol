@@ -1,9 +1,19 @@
-// simple example of making the drone fly
-
 var arDrone = require('ar-drone');
 var log = require('./throttle-log')(500);
 
 var client = arDrone.createClient();
+
+
+//VIDEO FEEDS - enable one of the following codecs
+//client.config('video:video_codec', '136'); //live stream MPEG4.2 360p, record H.264 360p
+//client.config('video:video_codec', '130'); //live stream MPEG4.2 360p, record H.264 720p
+//client.config('video:video_codec', '128'); //live stream MPEG4.2 360p
+//client.config('video:video_codec', '129'); //live stream H.264 hw encoder 360p
+client.config('video:video_codec', '131'); //live stream H.264 hw encoder 720p
+//----ENABLE USB RECORDING
+client.config('video:video_on_usb', 'TRUE'); //finally, enable USB recording of video stream
+
+
 // make sure the client always calls disableEmergency() before taking off
 var takeoff = client.takeoff;
 client.takeoff = function (value) {
@@ -25,8 +35,7 @@ process.on('SIGINT', function() {
     }
 });
 
-// repl for emergency...
-//client.createRepl();
+
 client.config('general:navdata_demo', 'FALSE');
 
 var cmds = [
@@ -46,7 +55,7 @@ var cmds = [
 ];
 
 // basic example. Drone can hook in here (event triggers command)
-var controller = require('./leap-remote-new');
+var controller = require('./remote-new');
 
   // iterate over all the commands and bind them to the event listeners
 cmds.forEach(function (cmd) {
