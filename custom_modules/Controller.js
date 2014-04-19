@@ -8,7 +8,7 @@ function Controller (client) {
 	this.yGoal = 0;
 	this.xSpeed = 0;
 	this.ySpeed = 0;
-	this.tol = 3;
+	this.tol = 1;
 	this.radtol = 0.1;
 	this.shouldDie = false;
 }
@@ -20,6 +20,15 @@ Controller.prototype.update = function(manual) {
 	{
 		if(!this.within())
 		{
+			var mag = this.loc.mag;
+			if(mag < -Math.PI)
+			{
+				mag += 2*Math.PI;
+			}
+			else if(mag > Math.PI)
+			{
+				mag -= 2*Math.PI;
+			}
 			if(!this.angGood())
 			{
 				this.client.stop(0);
@@ -40,23 +49,26 @@ Controller.prototype.update = function(manual) {
 					this.client.right(0.05);
 				}
 				var ang = this.getCorrAng();
-				var speed = Math.abs(ang - this.loc.mag);
-				console.log("must turn with speed " +speed);
+				var speed = Math.abs(ang - mag);
 				if(speed>1) speed = 1;
-				if(ang > 1.57 && this.loc.mag < -1.57)
+				if(ang > 1.57 && mag < -1.57)
 				{
+					console.log("must turn count with speed " +speed);
 					this.client.counterClockwise(speed);
 				}
-				else if(ang < -1.57 && this.loc.mag > 1.57)
+				else if(ang < -1.57 && mag > 1.57)
 				{
+					console.log("must turn clock with speed " +speed);
 					this.client.clockwise(speed);
 				}
-				else if(this.loc.mag > ang)
+				else if(mag > ang)
 				{
+					console.log("must turn count with speed " +speed);
 					this.client.counterClockwise(speed);
 				}
 				else
 				{
+					console.log("must turn clock with speed " +speed);
 					this.client.clockwise(speed);
 				}
 			}
@@ -90,6 +102,10 @@ Controller.prototype.update = function(manual) {
 				this.client.left(0);
 			}*/
 		}
+		else
+		{
+			this.client.stop(0);
+		}
 	}
 }
 
@@ -100,6 +116,14 @@ Controller.prototype.getCorrAng = function() {
 
 Controller.prototype.angGood = function() {
 	var currAng = this.loc.mag;
+	if(currAng < -Math.PI)
+	{
+		currAng += 2*Math.PI;
+	}
+	else if(currAng > Math.PI)
+	{
+		currAng -= 2*Math.PI;
+	}
 	var corrAng = this.getCorrAng();
 	return (currAng - this.radtol < corrAng && currAng + this.radtol > corrAng);
 }
