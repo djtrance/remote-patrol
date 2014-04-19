@@ -122,15 +122,15 @@ LeapForAuto.prototype.processFrame = function(frame) {
     this.takenOff = false;
     return;
   } 
-  if (!this.calibration) return this.calibrate(frame);
+  if (!this.calibration) return this.calibrate(frame, this);
 
   if (this.flying === false) return;
-  this.control(hand);
+  this.control(hand, this);
 }
 
-LeapForAuto.prototype.control = function(hand) {
-  this.frontBack(this.normalise(hand.palmNormal[2]));
-  this.leftRight(this.normalise(hand.palmNormal[0]));
+function control(hand, self) {
+  frontBack(normalise(hand.palmNormal[2]),self);
+  leftRight(normalise(hand.palmNormal[0]),self);
   //turn(normaliseCm(hand.palmPosition[0]));
   //upDown(normaliseCm(hand.palmPosition[1]));
 }
@@ -145,36 +145,36 @@ function registerClient(drone) {
 }*/
 
 
-LeapForAuto.prototype.calibrate = function(frame) {
+function calibrate(frame, self) {
   if (frame.hands.length !== 1) return;
-  if (!this.calibrate._first) return (this.calibrate._first = frame);
-  if ((frame.id - calibrate._first.id) < 150) return;
+  if (!self.calibrate._first) return (self.calibrate._first = frame);
+  if ((frame.id - self.calibrate._first.id) < 150) return;
   var hand = frame.hands[0];
-  this.calibrate._first = null;
+  self.calibrate._first = null;
 
-  this.calibration = {
-    ver: this.normaliseCm(hand.palmPosition[1]),
-    hor: this.normaliseCm(hand.palmPosition[0]),
+  self.calibration = {
+    ver: normaliseCm(hand.palmPosition[1]),
+    hor: normaliseCm(hand.palmPosition[0]),
 
-    lat: this.normalise(hand.palmNormal[0]),
-    lon: this.normalise(hand.palmNormal[2])
+    lat: normalise(hand.palmNormal[0]),
+    lon: normalise(hand.palmNormal[2])
   };
-  console.log('calibrated!', calibration);
+  console.log('calibrated!', self.calibration);
 }
 
-LeapForAuto.prototype.resetCalibration = function() {
-  this.calibration = null;
-  this.calibrate._first = null;
+function resetCalibration(self) {
+  self.calibration = null;
+  self.calibrate._first = null;
   //console.log('--- calibration reset');
 }
 
 
-LeapForAuto.prototype.checkGesture = function(gesture) {
+function checkGesture(gesture) {
   return gesture.progress > 1.9;
 }
 
 // get only the circle gesture from the gestures array
-LeapForAuto.prototype.getGesture = function(gestures, type) {
+function getGesture(gestures, type) {
   if (!gestures.length) return;
   var types = _.pluck(gestures, 'type');
   var index = types.indexOf(type);
@@ -189,52 +189,52 @@ function hover () {
 }*/
 
 // TODO: frontBack/leftRight can be partially applied into 1 function!
-LeapForAuto.prototype.frontBack = function(value) {
-  var _scale = _.partial(this.scale, this.calibration.lon, 80);
+function frontBack(value, self) {
+  var _scale = _.partial(scale, self.calibration.lon, 80);
 
-  if (this.isSimilar(value, this.calibration.lon)) {
+  if (isSimilar(value, self.calibration.lon)) {
   	//return emitter.emit('front', 0);
   	console.log("StopFront");
-  	this.goBack = false;
-  	this.goFront = false;
+  	self.goBack = false;
+  	self.goFront = false;
   }
   	
 
-  if (value > this.calibration.lon) {
+  if (value > self.calibration.lon) {
     console.log('FRONT');
     //return emitter.emit('front', _scale(value));
-    this.goFront = true;
-    this.goBack = false;
+    self.goFront = true;
+    self.goBack = false;
   }
-  if (value < this.calibration.lon) {
+  if (value < self.calibration.lon) {
     console.log('BACK');
     //return emitter.emit('back', _scale(value));
-    this.goBack = true;
-    this.goFront = false;
+    self.goBack = true;
+    self.goFront = false;
   }
 }
 
-function leftRight(value) { 
-  var _scale = _.partial(this.scale, this.calibration.lat, 80);
+function leftRight(value, self) { 
+  var _scale = _.partial(scale, self.calibration.lat, 80);
 
-  if (this.isSimilar(value, this.calibration.lat)) {
+  if (isSimilar(value, self.calibration.lat)) {
     console.log('LEFT-CAL');
     //return emitter.emit('left', 0);
-    this.turnLeft = false;
-    this.turnRight = false;
+    self.turnLeft = false;
+    self.turnRight = false;
   }
 
-  if (value > this.calibration.lat) {
+  if (value > self.calibration.lat) {
     console.log('LEFT');
     //return emitter.emit('left', _scale(value));
-    this.turnLeft = true;
-    this.turnRight = false;
+    self.turnLeft = true;
+    self.turnRight = false;
   }
-  if (value < this.calibration.lat) {
+  if (value < self.calibration.lat) {
     console.log('RIGHT');
     //return emitter.emit('right', _scale(value));
-    this.turnLeft = false;
-    this.turnRight = true;
+    self.turnLeft = false;
+    self.turnRight = true;
   }
 }
 
@@ -278,20 +278,20 @@ function animate(punch) {
 
 // expose methods
 
-LeapForAuto.prototype.isSimilar = function(value, compare, tolerance) {
+function isSimilar(value, compare, tolerance) {
   tolerance = tolerance || 15;
   return (Math.abs(value - compare) <= tolerance);
 }
 
-LeapForAuto.prototype.normaliseCm = function(value) {
+function normaliseCm(value) {
   return parseInt(value / 10, 10);
 }
 
-LeapForAuto.prototype.normalise = function(value) {
+function normalise(value) {
   return parseInt(100 * value, 10);
 }
 
-LeapForAuto.prototype.scale = function(min, max, value, cap) {
+function scale(min, max, value, cap) {
   var v = Math.abs(value - min);
   if (cap && v > max) v = max;
   return v / max;
