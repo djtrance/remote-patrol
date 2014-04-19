@@ -38,6 +38,7 @@ client.after(2500, function(){
     var atGoal = setInterval(function(){
     	if(LeapForAuto.manCtrl() == true && manBuffer == false)
     	{
+            console.log('Attempted buffer')
     		var testBuf = setInterval(function() {
     			clearInterval(testBuf);
     			manBuffer =true;
@@ -46,6 +47,7 @@ client.after(2500, function(){
         con.update(manBuffer);
         if(manBuffer)
         {
+            console.log('manual ctrl');
         	if(LeapForAuto.isLeft())
         	{
         		client.counterClockwise(0.5);

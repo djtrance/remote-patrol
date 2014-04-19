@@ -8,7 +8,7 @@ function Controller (client) {
 	this.yGoal = 0;
 	this.xSpeed = 0;
 	this.ySpeed = 0;
-	this.tol = 0.1;
+	this.tol = 10;
 	this.radtol = 0.1;
 	this.shouldDie = false;
 }
@@ -23,16 +23,16 @@ Controller.prototype.update = function(manual) {
 			if(!this.angGood())
 			{
 				this.client.front(0);
-				var ang = getCorrAng();
-				if(ang > 1.57 && mag < -1.57)
+				var ang = this.getCorrAng();
+				if(ang > 1.57 && this.mag < -1.57)
 				{
 					this.client.counterClockwise(0.5);
 				}
-				else if(ang < -1.57 && mag > 1.57)
+				else if(ang < -1.57 && this.mag > 1.57)
 				{
 					this.client.clockwise(0.5);
 				}
-				else if(mag > ang)
+				else if(this.mag > ang)
 				{
 					this.client.counterClockwise(0.5);
 				}
