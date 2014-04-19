@@ -43,11 +43,11 @@ function processFrame(frame) {
     emitter.emit('takeoff');
     resetCalibration();
   }
-  else if (frame.hands.length !== 1/* && flying*/ && takenOff) //if flying and hands are absent
+  else if (frame.hands.length !== 1 && flying && takenOff) //if flying and hands are absent
   {
     emitter.emit('land');
     console.log('LAND');
-    takenOff === false;
+    takenOff = false;
   }
 
 
