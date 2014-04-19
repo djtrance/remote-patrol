@@ -20,62 +20,66 @@ Controller.prototype.update = function(manual) {
 	{
 		if(!this.within())
 		{
-			if(!this.angGood())
+			var mag = this.loc.mag;
+			/*if(!this.angGood())
 			{
-				this.client.front(0);
+				this.client.stop(0);
 				var ang = this.getCorrAng();
-				if(ang > 1.57 && this.mag < -1.57)
+				var speed = Math.abs(ang - this.loc.mag);
+				console.log("must turn with speed " +speed);
+				if(speed>1) speed = 1;
+				if(ang > 1.57 && this.loc.mag < -1.57)
 				{
-					this.client.counterClockwise(0.5);
+					this.client.counterClockwise(speed);
 				}
-				else if(ang < -1.57 && this.mag > 1.57)
+				else if(ang < -1.57 && this.loc.mag > 1.57)
 				{
-					this.client.clockwise(0.5);
+					this.client.clockwise(speed);
 				}
-				else if(this.mag > ang)
+				else if(this.loc.mag > ang)
 				{
-					this.client.counterClockwise(0.5);
+					this.client.counterClockwise(speed);
 				}
 				else
 				{
-					this.client.clockwise(0.5);
+					this.client.clockwise(speed);
 				}
 			}
 			else {
-				this.client.clockwise(0);
+				this.client.stop(0);
 				this.client.front(0.1);
+			}
+			*/
+			if(!this.xGood)
+			{
+				if(this.loc.xLoc < this.xGoal) {
+					this.client.front(xSpeed);
+				}
+				else {
+					this.client.back(xSpeed);
+				}
+			}
+			else {
+				this.client.front(0);
+			}
+			if(!this.yGood)
+			{
+				if(this.loc.yLoc < this.yGoal) {
+					this.client.right(ySpeed);
+				}
+				else {
+					this.client.left(ySpeed);
+				}
+			}
+			else {
+				this.client.left(0);
 			}
 		}
 	}
-	/*
-	if(!this.xGood)
-	{
-		if(this.loc.xLoc < this.xGoal) {
-			this.client.front(xSpeed);
-		}
-		else {
-			this.client.back(xSpeed);
-		}
-	}
-	else {
-		this.client.front(0);
-	}
-	if(!this.yGood)
-	{
-		if(this.loc.yLoc < this.yGoal) {
-			this.client.right(ySpeed);
-		}
-		else {
-			this.client.left(ySpeed);
-		}
-	}
-	else {
-		this.client.left(0);
-	}*/
 }
 
 Controller.prototype.getCorrAng = function() {
-	console.log((this.yGoal - this.loc.yLoc) + " " + (this.xGoal - this.loc.xLoc));
+	//console.log((this.yGoal - this.loc.yLoc) + " " + (this.xGoal - this.loc.xLoc));
 	return Math.atan2((this.yGoal - this.loc.yLoc), (this.xGoal - this.loc.xLoc));
 }
 
