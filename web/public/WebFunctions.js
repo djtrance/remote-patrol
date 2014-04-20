@@ -22,36 +22,36 @@ setInterval(function(){
       $("#yLoc").html(Math.round(data[10], 4));
       $("#xGoal").html(Math.round(data[11], 4));
       $("#yGoal").html(Math.round(data[12], 4));
-      if(data[13]) {
-        $("#up-button").addClass('pressed');
+      /*if(data[13]) {
+        $("#up-button").addClass('blah');
       } else {
-        $("#up-button").removeClass('pressed');
+        $("#up-button").removeClass('blah');
       }
       if(data[14]) {
-        $("#down-button").addClass('pressed');
+        $("#down-button").addClass('blah');
       } else {
-        $("#down-button").removeClass('pressed');
+        $("#down-button").removeClass('blah');
       }
       if(data[15]) {
-        $("#left-button").addClass('pressed');
+        $("#left-button").addClass('blah');
       } else {
-        $("#left-button").removeClass('pressed');
+        $("#left-button").removeClass('blah');
       }
       if(data[16]) {
-        $("#right-button").addClass('pressed');
+        $("#right-button").addClass('blah');
       } else {
-        $("#right-button").removeClass('pressed');
+        $("#right-button").removeClass('blah');
       }
       if(data[17]) {
-        $("#go-up-button").addClass('pressed');
+        $("#go-up-button").addClass('blah');
       } else {
-        $("#go-up-button").removeClass('pressed');
+        $("#go-up-button").removeClass('blah');
       }
       if(data[18]) {
-        $("#go-down-button").addClass('pressed');
+        $("#go-down-button").addClass('blah');
       } else {
-        $("#go-down-button").removeClass('pressed');
-      }
+        $("#go-down-button").removeClass('blah');
+      }*/
     });
 }, 100);
 

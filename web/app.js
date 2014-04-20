@@ -97,13 +97,20 @@ app.get('/FINGERS_CROSSED.html', function(req, res){
 	res.sendfile("./FINGERS_CROSSED.html");
 });
 app.get('/update', function(req, res){
+	var dataArray = con.getData(override||manBuffer);
+	dataArray[13] = front;
+	dataArray[14] = back;
+	dataArray[15] = left;
+	dataArray[16] = right;
+	dataArray[17] = up;
+	dataArray[18] = down;
 	res.send(con.getData(override||manBuffer));
 });
 app.get('/lift', function(req, res){
 	client.takeoff();
 	con.loc.reset();
   //autonomous flying
-  client.animateLeds('blinkOrange',2,1000);
+  //client.animateLeds('blinkOrange',2,1000);
 	res.send(true);
 });
 app.get('/land', function(req, res){
@@ -112,7 +119,7 @@ app.get('/land', function(req, res){
     con.kill();
     client.stop();
     //landing (MOST IMPORTANT!)
-	client.animateLeds('blinkGreen',2,1);
+	//client.animateLeds('blinkGreen',2,1);
     client.land();
 	res.send(true);
 });
@@ -151,7 +158,7 @@ app.get('/act', function(req, res){	//This one activates controlling
 	override = true;
 	override_buf = true;
 	//manual flying
-	client.animateLeds('blinkStandard',1,4);
+	//client.animateLeds('blinkStandard',1,4);
 	res.send(true);
 });
 app.get('/off', function(req, res){	//This handles turning off all commands
@@ -169,11 +176,11 @@ app.get('/off', function(req, res){	//This handles turning off all commands
 		if(override_buf == false)
 		{
 			override = false;
-      if(doBlinkOrange) {
-  			//autonomous flying
-  			client.animateLeds('blinkOrange',2,1000);
-      }
-      else doBlinkOrange = true;
+	     	if(doBlinkOrange) {
+	  			//autonomous flying
+	  			//client.animateLeds('blinkOrange',2,1000);
+	      	}
+	      	else doBlinkOrange = true;
 		}
 	}, 3000);
 	override_buf = false;
@@ -204,7 +211,7 @@ process.on('SIGINT', function() {
         exiting = true;
         con.kill();
         //landing (MOST IMPORTANT!)
-		client.animateLeds('blinkGreen',2,1);
+		//client.animateLeds('blinkGreen',2,1);
         client.stop();
         client.land();
     }
@@ -221,7 +228,7 @@ client.after(2500, function(){
                 clearInterval(testBuf);
                 manBuffer =true;
                 //manual flying
-				client.animateLeds('blinkStandard',1,4);
+				//client.animateLeds('blinkStandard',1,4);
             }, 200);
         }
         con.update(manBuffer||override);	//Update the controller to move if not overridden
@@ -229,7 +236,7 @@ client.after(2500, function(){
         if(override)
         {
         	//-------Control overrides for web UI controls
-        	client.stop();
+        	//client.stop();
         	//console.log("Overridden: " + "front:"+ front+" back:"+ back+" left:"+ left+" right:"+ right);
         	if(front) client.front(0.3);
         	if(back) client.back(0.3);
@@ -266,7 +273,7 @@ client.after(2500, function(){
           {
             manBuffer = false;
             //autonomous flying
-			client.animateLeds('blinkOrange',2,1000);
+			//client.animateLeds('blinkOrange',2,1000);
           }
           if(neut)		//If no commands are being given to leaper, stabilize
           {
@@ -282,7 +289,7 @@ client.after(2500, function(){
             console.log('Trykill');
             clearInterval(atGoal);
             //landing (MOST IMPORTANT!)
-			client.animateLeds('blinkGreen',2,1);
+			//client.animateLeds('blinkGreen',2,1);
             client.stop();
             client.land();
         }
