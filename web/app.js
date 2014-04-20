@@ -104,7 +104,7 @@ app.get('/lift', function(req, res){
 	con.loc.reset();
   isFlying = true;
   //autonomous flying
-  client.animateLeds('blinkOrange',2,1000);
+  //client.animateLeds('blinkOrange',2,1000);
 	res.send(true);
 });
 app.get('/land', function(req, res){
@@ -112,7 +112,7 @@ app.get('/land', function(req, res){
     exiting = true;
     isFlying = false;
     //landing (MOST IMPORTANT!)
-    client.animateLeds('blinkGreen',2,1);
+    //client.animateLeds('blinkGreen',2,1);
     con.kill();
     client.stop();
     client.land();
@@ -175,7 +175,7 @@ app.get('/off', function(req, res){	//This handles turning off all commands
 			override = false;
         if (isFlying) {
           //autonomous flying
-          client.animateLeds('blinkOrange',2,1000);
+          client.animateLeds('blinkOrange',2,2);
         }
 		}
 	}, 3000);
@@ -206,11 +206,12 @@ process.on('SIGINT', function() {
         console.log('\nGot SIGINT. Landing, press Control-C again to force exit.');
         exiting = true;
         isFlying = false;
-        //landing (MOST IMPORTANT!)
+                //landing (MOST IMPORTANT!)
         client.animateLeds('blinkGreen',2,1);
         con.kill();
         client.stop();
         client.land();
+
     }
 });
 
@@ -248,12 +249,12 @@ client.after(2500, function(){
         {
           console.log('manual ctrl');
           var neut = true;
-          if(leaper.isLeft())
+          if(leaper.isRight())
           {
             client.left(0.4);
             neut = false;
           }
-          if(leaper.isRight())
+          if(leaper.isLeft())
           {
             client.right(0.4);
             neut = false;
@@ -273,7 +274,7 @@ client.after(2500, function(){
             manBuffer = false;
             if(isFlying) {
               //autonomous flying
-  			      client.animateLeds('blinkOrange',2,1000);
+  			      client.animateLeds('blinkOrange',2,2);
             }
           }
           if(neut)		//If no commands are being given to leaper, stabilize
@@ -289,10 +290,11 @@ client.after(2500, function(){
         {
             console.log('Trykill');
             clearInterval(atGoal);
-            //landing (MOST IMPORTANT!)
-			      client.animateLeds('blinkGreen',2,1);
+                         //landing (MOST IMPORTANT!)
+            //client.animateLeds('blinkGreen',2,1);
             client.stop();
             client.land();
+
         }
         if(con.within() && leaper.manCtrl() == false)	//------This is somewhat deprecated
         {
