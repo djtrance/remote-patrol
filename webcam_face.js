@@ -23,53 +23,55 @@ var GREEN = [0, 255, 0]; //B, G, R
 var WHITE = [255, 255, 255]; //B, G, R
 var RED = [0, 0, 255]; //B, G, R
 
-var callback = setInterval(function(){
-    if(iter<0)
-    {
-        console.log('Trykill');
-        clearInterval(callback);
-    }
+var callback = setInterval( function() {
+  if (iter<0)
+  {
+      console.log('Trykill');
+      clearInterval(callback);
+  }
 
-    vid.read(function(err, im){
-        var all = new cv.Matrix(im.height(), im.width());
+  vid.read(function(err, im){
+      var all = new cv.Matrix(im.height(), im.width());
 
-        body = im.copy();
+      body = im.copy();
 
-        body.detectObject(cv.FACE_CASCADE, {}, function(err, bodies){
-            for (var i=0;i<bodies.length; i++){
+      body.detectObject(cv.FACE_CASCADE, {}, function(err, bodies){
+          for(var i=0; i<bodies.length; i++) { //start face count
+            //for(var i=0; i<1; i++) { //start face count
+              var b = bodies[i];
+              var unique = true;
 
-                var b = bodies[i];
-                var unique = true;
-
-        //THIS PART
-                if(b != null)
-                for (var j=i;j<bodies.length; j++){
-                    var cb = bodies[j];
-                    if(cb != null &&
-                      ((Math.abs(cb.x - b.x)>(b.width) && Math.abs(cb.y - b.y)>(b.height))
-                      || (Math.abs(cb.x - b.x)>(cb.width) && Math.abs(cb.y - b.y)>(cb.height)))
-                      || i == j)
-                    {
+              //THIS PART
+              if(b != null)
+              for (var j = i; j < bodies.length; j++)
+              {
+                  var cb = bodies[j];
+                  if(cb != null && (
+                         (Math.abs(cb.x - b.x)> (b.width) && Math.abs(cb.y - b.y)> (b.height))
+                      || (Math.abs(cb.x - b.x)>(cb.width) && Math.abs(cb.y - b.y)>(cb.height))
+                    ) || i == j )
+                  {
+                      if (unique)
                         body.ellipse(b.x + b.width/2, b.y + b.height/2, b.width/2, b.height/2);
-                    }
-                    else
-                    {
-                        bodies[j] = null;
-                    }
-                }
-            }
-            window3.show(body)
-            //body.save("./out")
-        });
-        im.convertGrayscale();
-        im_canny = im.copy();
+                  }
+                  else
+                  {
+                      bodies[j] = null;
+                  }
+              }
+          }
+          window3.show(body);
+          //body.save("./out")
+      });
+      im.convertGrayscale();
+      im_canny = im.copy();
 
-        if(im)
-            //window1.show(im);
-        console.log(""+iter);
-        iter++;
+      if(im)
+          //window1.show(im);
+      console.log(""+iter);
+      iter++;
 
-    })
+  })
 }, 33);
 
 // When opening a file, the full path must be passed to opencv
