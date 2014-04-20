@@ -50,7 +50,7 @@ body {
   box-shadow: -3px 0 0 #888;
   -webkit-transform: rotate(180deg);
 }
-#d-pad #up-button:active {
+#d-pad #up-button:active #up-button.pressed{
   -webkit-transform: translate(0,3px) rotate(180deg) rotate3d(1, 0, 0, 20deg);
   box-shadow: -1px 0 0 #888;
 }
@@ -59,7 +59,7 @@ body {
   box-shadow: 3px 0px 0px #888;
   -webkit-transform: rotate(90deg);
 }
-#d-pad #left-button:active {
+#d-pad #left-button:active #left-button.pressed{
   -webkit-transform: translate(3px,0) rotate(90deg) rotate3d(1, 0, 0, 20deg);
   box-shadow: 1px 0 0 #888;
 }
@@ -69,7 +69,7 @@ body {
   box-shadow: -3px 3px 0 #888;
   -webkit-transform: rotate(270deg);
 }
-#d-pad #right-button:active {
+#d-pad #right-button:active #right-button.pressed{
   -webkit-transform: translate(-3px,0) rotate(270deg) rotate3d(1, 0, 0, 20deg);
   box-shadow: -1px 1px 0 #888;
 }
@@ -78,7 +78,7 @@ body {
   top: 100px;
   box-shadow: 3px 1px 0px #888;
 }
-#d-pad #down-button:active {
+#d-pad #down-button:active #down-button.pressed{
   -webkit-transform: translate(0,-3px) rotate3d(1, 0, 0, 20deg);
   box-shadow: 1px 0 0 #888;
 }
@@ -124,7 +124,7 @@ body {
     box-shadow: 0 3px 0 #888;
     margin-bottom:20px;
 }
-#go-up-button:active{
+#go-up-button:active #go-up-button.pressed{
     -webkit-transform: translate(0,3px) rotate3d(1, 0, 0, 20deg);
 }
 #go-down-button {
@@ -132,7 +132,7 @@ body {
     top: 95px;
     box-shadow: 0 3px 0 #888;
 }
-#go-down-button:active {
+#go-down-button:active #go-down-button.pressed{
     -webkit-transform: rotate(300deg) translate(10px, -17px) rotate3d(.6, .6, 0, 20deg);
 }
 

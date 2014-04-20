@@ -120,7 +120,10 @@ Controller.prototype.stable = function() {
 }
 
 Controller.prototype.getData = function(manual) {
-	return this.loc.getData(manual);
+	var dataArray = this.loc.getData;
+	dataArray[11] = this.xGoal;
+	dataArray[12] = this.yGoal;
+	return dataArray;
 }
 
 Controller.prototype.getCorrAng = function() {

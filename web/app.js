@@ -1,3 +1,4 @@
+//--------Sets up camera stream server
 var express = require('express');
 var http = require('http');
 var routes = require('./routes');
@@ -8,7 +9,7 @@ var path = require('path');
 
 
 
-
+//-------More for camera stream server
 var server2 = http.createServer(app2);
 
 //app.set('view engine', 'ejs');
@@ -39,6 +40,7 @@ app2.get('/', routes.index);
 // should be require("dronestream").listen(server);
 require("./index").listen(server2);
 server2.listen(3001);
+//----------Done with camera stream server
 
 
 
@@ -46,8 +48,7 @@ server2.listen(3001);
 
 
 
-
-
+//--------Set up the vars-----
 var fs = require('fs');
 var express = require('express');
 var app = express();
@@ -74,8 +75,10 @@ var up = false;
 var down = false;
 var override = false;
 var override_buf = false;
+//----Done with vars
 
 
+//-----UI interfaing comands
 app.get('/', function(req, res){
 	res.sendfile("./public/index.html");
 });
@@ -93,10 +96,18 @@ app.get('/FINGERS_CROSSED.html', function(req, res){
 	res.sendfile("./FINGERS_CROSSED.html");
 });
 app.get('/update', function(req, res){
+	var dataArray = con.getData(override||manBuffer);
+	dataArray[13] = front;
+	dataArray[14] = back;
+	dataArary[15] = left;
+	dataArray[16] = right;
+	dataArray[17] = up;
+	dataArray[18] = down;
 	res.send(con.getData(override||manBuffer));
 });
 app.get('/lift', function(req, res){
 	client.takeoff();
+	con.loc.reset();
 	res.send(true);
 });
 app.get('/land', function(req, res){
@@ -104,57 +115,73 @@ app.get('/land', function(req, res){
     exiting = true;
     con.kill();
     client.stop();
+    //landing (MOST IMPORTANT!)
+	client.animateLeds('blinkGreen',2,1);
     client.land();
 	res.send(true);
 });
-app.get('/act', function(req, res){
+app.get('/act', function(req, res){	//This one activates controlling
 	console.log(req.param('act'));
 	if(req.param('act')=="front")
 	{
 		front = true;
+		back = false;
 	}
 	if(req.param('act')=="back")
 	{
 		back = true;
+		front = false;
 	}
 	if(req.param('act')=="left")
 	{
 		left = true;
+		right = false;
 	}
 	if(req.param('act')=="right")
 	{
 		right = true;
+		left = false;
 	}
 	if(req.param('act')=="up")
 	{
 		up = true;
+		down = false;
 	}
 	if(req.param('act')=="down")
 	{
 		down = true;
+		up = false;
 	}
 	override = true;
 	override_buf = true;
+	//manual flying
+	client.animateLeds('blinkStandard',1,4);
 	res.send(true);
 });
-app.get('/off', function(req, res){
+app.get('/off', function(req, res){	//This handles turning off all commands
 	console.log("off");
-	front = false;
-	back = false;
-	left = false;
-	right = false;
-	up = false;
-	down = false;
+	if(req.param('act') == 0)
+	{
+		front = false;
+		back = false;
+		left = false;
+		right = false;
+		up = false;
+		down = false;
+	}
 	setTimeout(function(){
 		if(override_buf == false)
 		{
 			override = false;
+			//autonomous flying
+			client.animateLeds('blinkOrange',2,1000);
 		}
 	}, 3000);
 	override_buf = false;
 	res.send(true);
 });
 
+//--------Video stuff
 client.disableEmergency();
 //VIDEO FEEDS - enable one of the following codecs
 //client.config('video:video_codec', '136'); //live stream MPEG4.2 360p, record H.264 360p
@@ -177,28 +204,34 @@ process.on('SIGINT', function() {
         console.log('\nGot SIGINT. Landing, press Control-C again to force exit.');
         exiting = true;
         con.kill();
+        //landing (MOST IMPORTANT!)
+		client.animateLeds('blinkGreen',2,1);
         client.stop();
         client.land();
     }
 });
 
 //client.takeoff();
-//leaper.start();
+leaper.start();		//Start up leap
 client.after(2500, function(){
     var atGoal = setInterval(function(){
-        if(leaper.manCtrl() == true && manBuffer == false)
+        if(leaper.manCtrl() == true && manBuffer == false)	//If almost leap controlled, but not confirmed yet
         {
-            console.log('Attempted buffer')
+            console.log('Attempted buffer')		//Attempt to buffer
             var testBuf = setInterval(function() {
                 clearInterval(testBuf);
                 manBuffer =true;
+                //manual flying
+				client.animateLeds('blinkStandard',1,4);
             }, 200);
         }
-        con.update(manBuffer||override);
+        con.update(manBuffer||override);	//Update the controller to move if not overridden
+        									//If manBuffer||override, it is running manual.
         if(override)
         {
+        	//-------Control overrides for web UI controls
         	client.stop();
-        	console.log("Overridden: " + "front:"+ front+" back:"+ back+" left:"+ left+" right:"+ right);
+        	//console.log("Overridden: " + "front:"+ front+" back:"+ back+" left:"+ left+" right:"+ right);
         	if(front) client.front(0.3);
         	if(back) client.back(0.3);
         	if(left) client.left(0.3);
@@ -206,7 +239,7 @@ client.after(2500, function(){
         	if(up) client.up(0.2);
         	if(down) client.down(0.2);
         }
-        if(manBuffer)
+        if(manBuffer)	//If controlled manually by the leap
         {
           console.log('manual ctrl');
           var neut = true;
@@ -230,11 +263,13 @@ client.after(2500, function(){
             client.back(0.4);
             neut = false;
           }
-          if(!leaper.manCtrl())
+          if(!leaper.manCtrl())		//If leaper is actually not under control anymore
           {
             manBuffer = false;
+            //autonomous flying
+			client.animateLeds('blinkOrange',2,1000);
           }
-          if(neut)
+          if(neut)		//If no commands are being given to leaper, stabilize
           {
           	con.stable();
           }
@@ -243,14 +278,16 @@ client.after(2500, function(){
           front = leaper.isFront();
           back = leaper.isBack();
         }
-        if(con.shouldKill())
+        if(con.shouldKill())	//--------Call to check if anything asked con to die
         {
             console.log('Trykill');
             clearInterval(atGoal);
+            //landing (MOST IMPORTANT!)
+			client.animateLeds('blinkGreen',2,1);
             client.stop();
             client.land();
         }
-        if(con.within() && leaper.manCtrl() == false)
+        if(con.within() && leaper.manCtrl() == false)	//------This is somewhat deprecated
         {
             goal1 = true;
             client.stop();

@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <link href="style.css" rel="stylesheet"></link>
-
+        <link href="style.css" rel="stylesheet"></link>
+    </meta>
 </head>
 <body>
     <div class="buttons">
@@ -14,8 +14,7 @@
                 <button class="btn btn-danger" data-action="drone" data-param="disableEmergency"><i class="icon-wrench icon-white"></i> recover</button>            
             </div>              
         </div>    
-    </div>
-    </div>       
+    </div>    
     <iframe id="cam" src = "http://localhost:3001"  scrolling="no" frameborder="0"></iframe>
     <div id="d-pad">
         <div id="up-button" class="d-pad-button"> &#8659; </div>
@@ -36,6 +35,8 @@
         <div>left/right: <span id="leftRightDegrees"></span>°</div>
         <div>Altitude: <span id="altitudeMeters"></span>m</div>
         <div>Velocity (x/y/z): <span id="xVelocity"></span> / <span id="yVelocity"></span> / <span id="zVelocity"></span></div>
+        <div>Location (x,y) (<span id="xLoc"></span>,<span id = "yLoc"></span>)
+        <div>Goal (x,y) (<span id="xGoal"></span>,<span id = "yGoal"></span>)
     </div>
     <script>var myIframe = document.getElementById('iframe');
     myIframe.onload = function () {

@@ -43,6 +43,8 @@ Locator.prototype.processData = function(d) {
     this.dataArray[6]= d.demo.xVelocity;
     this.dataArray[7]= d.demo.yVelocity;
     this.dataArray[8]= d.demo.zVelocity;
+    this.dataArray[9] = this.xLoc;
+    this.dataArray[10] = this.yLoc;
     this.xVel = d.demo.xVelocity/1000;
     this.yVel = d.demo.yVelocity/1000;
     this.altitude = d.demo.altitude;
@@ -66,4 +68,9 @@ Locator.prototype.processData = function(d) {
         }
     }
     //console.log("Mag: " + this.mag);
+}
+
+Locator.prototype.reset() {
+    this.xLoc = 0;
+    this.yLoc = 0;
 }
