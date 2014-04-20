@@ -1,0 +1,42 @@
+{
+  "name": "nodecopter-leap",
+  "version": "0.0.1",
+  "description": "control your drone with the Leap Motion controller",
+  "main": "leap-remote.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": {
+    "name": "Gilles Ruppert",
+    "email": "gilles@madeofbytes.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gillesruppert/nodecopter-leap.git"
+  },
+  "keywords": [
+    "nodecopter",
+    "ardrone",
+    "remote",
+    "leapmotion"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "leapjs": "~0.2.0",
+    "underscore": "~1.5.1",
+    "curtsy": "0.0.1"
+  },
+  "devDependencies": {
+    "expect.js": "~0.2.0",
+    "mocha": "~1.12.1",
+    "ar-drone": "~0.2.0"
+  },
+  "readme": "Nodecopter Leap Motion\n======================\n\nControl your nodecopter with a [Leap Motion](https://www.leapmotion.com/) controller.\n\n## installation\n```shell\nnpm install nodecopter-leap\n```\n\n## commands\nThe system is calibrated When you put your hand over the device.\nWhen you remove your hand, the drone hovers.\nEach time you put your hand over the device, the position is recalibrated which\ntakes about 1 second.\n\n- circle finger clockwise: takeoff\n- circle finger counter-clockwise: land\n- forward, backward, left right work by tilting the hand\n- clockwise & counter-clockwise work by moving your hand to the right/left\n- do a flip by keeping one hand over the leap and punching forward with the\nsecond hand\n\n## run\n```shell\nnode ./examples/fly.js\n```\n\n## test\nto run the test, run `npm install` in the directory and run `npm test`.\n\n## License\nThe code is licensed under the MIT license.\n",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/gillesruppert/nodecopter-leap/issues"
+  },
+  "homepage": "https://github.com/gillesruppert/nodecopter-leap",
+  "_id": "nodecopter-leap@0.0.1",
+  "_from": "nodecopter-leap@"
+}

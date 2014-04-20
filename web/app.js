@@ -3,11 +3,19 @@ var express = require('express');
 var app = express();
 
 app.use(express.static(__dirname + './public'));
+var Controller = require('./custom_modules/Controller');
+var Locator = require('./custom_modules/Locator');
+var LeapForAuto = require('./LeapForAuto');
+var manBuffer = false;
+var leaper = new LeapForAuto();
+var arDrone = require('ar-drone');
+var client = arDrone.createClient();
 
 var server = app.listen(3000, function() {
     console.log('Listening on port %d', server.address().port);
 });
 
+var con = new Controller(client);
 var front = false;
 var back = false;
 var left = false;
@@ -15,22 +23,35 @@ var right = false;
 var up = false;
 var down = false;
 var override = false;
+var override_buf = false;
 
 app.get('/', function(req, res){
 	res.sendfile("./public/index.html");
-})
+});
 app.get('/style.css', function(req, res){
 	res.sendfile("./public/style.css");
-})
+});
 app.get('/WebFunctions.js', function(req, res){
 	res.sendfile("./public/WebFunctions.js");
-})
+});
 app.get('/components/jquery/jquery.js', function(req, res){
 	res.sendfile("./components/jquery/jquery.js");
-})
+});
 app.get('/update', function(req, res){
+	res.send(con.getData(override||manBuffer));
+});
+app.get('/lift', function(req, res){
+	client.liftoff();
 	res.send(true);
-})
+}
+app.get('/land', function(req, res){
+    console.log('Land control');
+    exiting = true;
+    con.kill();
+    client.stop();
+    client.land();
+	res.send(true);
+});
 app.get('/act', function(req, res){
 	console.log(req.param('act'));
 	if(req.param('act')=="front")
@@ -57,15 +78,128 @@ app.get('/act', function(req, res){
 	{
 		down = true;
 	}
+	override = true;
+	override_buf = true;
 	res.send(true);
-})
+});
 app.get('/off', function(req, res){
 	console.log("off");
-	var front = false;
-	var back = false;
-	var left = false;
-	var right = false;
-	var up = false;
-	var down = false;
+	front = false;
+	back = false;
+	left = false;
+	right = false;
+	up = false;
+	down = false;
+	setTimeout(function(){
+		if(override_buf == false)
+		{
+			override = false;
+		}
+	}, 3000);
+	override_buf = false;
 	res.send(true);
-})
+});
+
+client.disableEmergency();
+//VIDEO FEEDS - enable one of the following codecs
+//client.config('video:video_codec', '136'); //live stream MPEG4.2 360p, record H.264 360p
+//client.config('video:video_codec', '130'); //live stream MPEG4.2 360p, record H.264 720p
+//client.config('video:video_codec', '128'); //live stream MPEG4.2 360p
+//client.config('video:video_codec', '129'); //live stream H.264 hw encoder 360p
+client.config('video:video_codec', '131'); //live stream H.264 hw encoder 720p
+//----ENABLE USB RECORDING
+client.config('video:video_on_usb', 'TRUE'); //finally, enable USB recording of video stream
+
+
+
+
+// Land on ctrl-c
+var exiting = false;
+process.on('SIGINT', function() {
+    if (exiting) {
+        process.exit(0);
+    } else {
+        console.log('\nGot SIGINT. Landing, press Control-C again to force exit.');
+        exiting = true;
+        con.kill();
+        client.stop();
+        client.land();
+    }
+});
+
+//client.takeoff();
+leaper.start();
+client.after(2500, function(){
+    var atGoal = setInterval(function(){
+        if(leaper.manCtrl() == true && manBuffer == false)
+        {
+            console.log('Attempted buffer')
+            var testBuf = setInterval(function() {
+                clearInterval(testBuf);
+                manBuffer =true;
+            }, 200);
+        }
+        con.update(manBuffer);
+        if(override)
+        {
+        	client.stop();
+        	console.log("Overridden: " + "front:"+ front+" back:"+ back+" left:"+ left+" right:"+ right);
+        	if(front) client.front(0.3);
+        	if(back) client.back(0.3);
+        	if(left) client.left(0.3);
+        	if(right) client.right(0.3);
+        	if(up) client.up(0.2);
+        	if(down) client.down(0.2);
+        }
+        if(manBuffer)
+        {
+          console.log('manual ctrl');
+          var neut = true;
+          if(leaper.isLeft())
+          {
+            client.left(0.4);
+            neut = false;
+          }
+          if(leaper.isRight())
+          {
+            client.right(0.4);
+            neut = false;
+          }
+          if(leaper.isFront())
+          {
+            client.front(0.4);
+            neut = false;
+          }
+          if(leaper.isBack())
+          {
+            client.back(0.4);
+            neut = false;
+          }
+          if(!leaper.manCtrl())
+          {
+            manBuffer = false;
+          }
+          if(neut)
+          {
+          	con.stable();
+          }
+          left = leaper.isLeft();
+          right = leaper.isRight();
+          front = leaper.isFront();
+          back = leaper.isBack();
+        }
+        if(con.shouldKill())
+        {
+            console.log('Trykill');
+            clearInterval(atGoal);
+            client.stop();
+            client.land();
+        }
+        if(con.within() && leaper.manCtrl() == false)
+        {
+            goal1 = true;
+            client.stop();
+            console.log("Goal reached, awaiting Instruction");
+        }
+    }, 70); //Refresh Rate
+});

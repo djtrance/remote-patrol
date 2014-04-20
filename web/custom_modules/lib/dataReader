@@ -1,0 +1,55 @@
+var Stream       = require('stream').Stream;
+var util         = require('util');
+var dgram        = require('dgram');
+var constants    = require('../constants');
+var parseNavdata = require('./parseNavdata');
+
+module.exports = dataReader;
+util.inherits(dataReader, Stream);
+
+function dataReader() {
+  Stream.call(this);
+
+  options = options || {};
+
+  this.readable        = true;
+  this._socket         = dgram.createSocket('udp4');
+  this._port           = 5554;
+  this._ip             = '192.168.1.1';
+  this._initialized    = false;
+  this._parseNavdata   = parseData;
+  this._timeout        = 100;
+  this._timer          = undefined;
+  this._sequenceNumber = 0;
+}
+
+dataReader.prototype.resume = function() {
+  if (!this._initialized) {
+    this._init();
+    this._initialized = true;
+  }
+
+  this._requestNavdata();
+};
+
+dataReader.prototype.destroy = function() {
+  this._socket.close();
+};
+
+dataReader.prototype._init = function() {
+  this._socket.bind();
+  this._socket.on('message', this._handleMessage.bind(this));
+};
+
+dataReader.prototype._requestNavdata = function() {
+  var buffer = new Buffer([1]);
+  this._socket.send(buffer, 0, buffer.length, this._port, this._ip);
+
+  this._setTimeout();
+};
+
+dataReader.prototype._setTimeout = function() {
+  clearTimeout(this._timer);
+  this._timer = setTimeout(this._requestNavdata.bind(this), this._timeout);
+};
+

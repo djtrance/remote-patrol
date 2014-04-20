@@ -10,7 +10,7 @@
         <div class="btn-toolbar">
             <div class="input-append btn-group">
                 <button class="btn btn-success" data-action="drone" data-param="takeoff"><i class="icon-play icon-white"></i> takeoff</button>
-                <button class="btn btn-warning" data-action="drone" data-param="land"><i class="icon-stop icon-white"></i> land</button>
+                <button id = "land" class="btn btn-warning" data-action="drone" data-param="land"><i class="icon-stop icon-white"></i> land</button>
                 <button class="btn btn-danger" data-action="drone" data-param="disableEmergency"><i class="icon-wrench icon-white"></i> recover</button>            
             </div>              
         </div>    
@@ -29,7 +29,7 @@
         <div id = "go-down-button" class="alt-pad-button"> <div id = "shifttext">&#9650;</div></div>
     </div>
     <div id="stats">
-        <div>Control: <span id ="droneControl">Autonomous</span></div>     
+        <div>Control: <span id="droneControl">Autonomous</span></div>     
         <div>Battery: <span id="batteryPercentage">(Drone not connected)</span>%</div>
         <div>Direction: <span id="clockwiseDegrees"></span>°</div>
         <div>front/back: <span id="frontBackDegrees"></span>°</div>

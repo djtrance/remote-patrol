@@ -2,15 +2,15 @@ setInterval(function(){
 	$.get(
     "update",
     function(data) {
-    	$("#droneControl").html(data[0]));
+    	$("#droneControl").html(data[0]);
     	$("#batteryPercentage").html(Math.round(data[1], 4));
-    	$("#clockwiseDegrees" + type).html(Math.round(data[2], 4));
-    	$("#frontBackDegrees" + type).html(Math.round(data[3], 4));
-    	$("#leftRightDegrees" + type).html(Math.round(data[4], 4));
-    	$("#altitude" + type).html(Math.round(data[5], 4));
-    	$("#xVelocity" + type).html(Math.round(data[6], 4));
-    	$("#yVelocity" + type).html(Math.round(data[7], 4));
-    	$("#zVelocity" + type).html(Math.round(data[8], 4));
+    	$("#clockwiseDegrees").html(Math.round(data[2], 4));
+    	$("#frontBackDegrees").html(Math.round(data[3], 4));
+    	$("#leftRightDegrees").html(Math.round(data[4], 4));
+    	$("#altitude").html(Math.round(data[5], 4));
+    	$("#xVelocity").html(Math.round(data[6], 4));
+    	$("#yVelocity").html(Math.round(data[7], 4));
+    	$("#zVelocity").html(Math.round(data[8], 4));
     });
 }, 100);
 
@@ -75,3 +75,11 @@ $("#go-down-button").mousedown(function() {
        	//alert(data);
     });
 });
+
+$("#land").mousedown(function(){
+    $.get(
+    "land",
+    function(data) {
+        //alert(data);
+    });
+})
