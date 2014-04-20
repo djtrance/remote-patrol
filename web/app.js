@@ -79,7 +79,7 @@ var isFlying = false;
 //----Done with vars
 
 
-//-----UI interfaing comands
+//-----UI interfacing comands
 app.get('/', function(req, res){
 	res.sendfile("./public/index.html");
 });
