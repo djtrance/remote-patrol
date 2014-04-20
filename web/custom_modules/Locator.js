@@ -45,8 +45,8 @@ Locator.prototype.processData = function(d) {
     this.dataArray[8]= d.demo.zVelocity;
     this.dataArray[9] = this.xLoc;
     this.dataArray[10] = this.yLoc;
-    this.xVel = d.demo.xVelocity/1000;
-    this.yVel = d.demo.yVelocity/1000;
+    this.xVel = d.demo.xVelocity/100;
+    this.yVel = d.demo.yVelocity/100;
     this.altitude = d.demo.altitude;
     //console.log("Altitude:" + this.altitude + " xV:" + this.xVel +  " yV:" + this.yVel);
     //console.log("xLoc:" + this.xLoc +  " yLoc:" + this.yLoc);

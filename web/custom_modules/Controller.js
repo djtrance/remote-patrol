@@ -8,7 +8,7 @@ function Controller (client) {
 	this.yGoal = 0;
 	this.xSpeed = 0;
 	this.ySpeed = 0;
-	this.tol = 1;
+	this.tol = 10;
 	this.radtol = 0.1;
 	this.shouldDie = false;
 	this.direct = true;
