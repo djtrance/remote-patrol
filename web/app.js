@@ -194,7 +194,7 @@ client.after(2500, function(){
                 manBuffer =true;
             }, 200);
         }
-        con.update(manBuffer);
+        con.update(manBuffer||override);
         if(override)
         {
         	client.stop();
