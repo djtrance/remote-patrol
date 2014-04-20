@@ -1,3 +1,53 @@
+var express = require('express');
+var http = require('http');
+var routes = require('./routes');
+var app2 = express();
+var path = require('path');
+  //var server = require('http');
+//server.createServer(app);
+
+
+
+
+var server2 = http.createServer(app2);
+
+//app.set('view engine', 'ejs');
+
+
+//app.configure(function () {
+    //app2.set('views', __dirname + '/views');
+    app2.set('view engine', 'jade', { pretty: true });
+    //app2.use(express.favicon());
+    //app.use(express.logger('dev'));
+    app2.use(app2.router);
+    app2.use(express.static(path.join(__dirname, 'public')));
+//});
+/*
+app.configure('development', function () {
+    app.use(express.errorHandler());
+    app.locals.pretty = true;
+});*/
+
+app2.get('/', routes.index);
+
+/*
+ * Important:
+ *
+ * pass in the server object to listen, not the express app
+ * call 'listen' on the server, not the express app
+ */
+// should be require("dronestream").listen(server);
+require("./index").listen(server2);
+server2.listen(3001);
+
+
+
+
+
+
+
+
+
 var fs = require('fs');
 var express = require('express');
 var app = express();
@@ -25,6 +75,7 @@ var down = false;
 var override = false;
 var override_buf = false;
 
+
 app.get('/', function(req, res){
 	res.sendfile("./public/index.html");
 });
@@ -37,13 +88,17 @@ app.get('/WebFunctions.js', function(req, res){
 app.get('/components/jquery/jquery.js', function(req, res){
 	res.sendfile("./components/jquery/jquery.js");
 });
+app.get('/FINGERS_CROSSED.html', function(req, res){
+	console.log("got the file");
+	res.sendfile("./FINGERS_CROSSED.html");
+});
 app.get('/update', function(req, res){
 	res.send(con.getData(override||manBuffer));
 });
 app.get('/lift', function(req, res){
-	client.liftoff();
+	client.takeoff();
 	res.send(true);
-}
+});
 app.get('/land', function(req, res){
     console.log('Land control');
     exiting = true;
@@ -128,7 +183,7 @@ process.on('SIGINT', function() {
 });
 
 //client.takeoff();
-leaper.start();
+//leaper.start();
 client.after(2500, function(){
     var atGoal = setInterval(function(){
         if(leaper.manCtrl() == true && manBuffer == false)

@@ -83,3 +83,11 @@ $("#land").mousedown(function(){
         //alert(data);
     });
 })
+
+$("#lift").mousedown(function(){
+    $.get(
+    "lift",
+    function(data) {
+        //alert(data);
+    });
+})
