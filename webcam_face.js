@@ -68,7 +68,7 @@ var callback = setInterval( function() {
 
       if(im)
           //window1.show(im);
-      console.log(""+iter);
+      //console.log(""+iter);
       iter++;
 
   })
