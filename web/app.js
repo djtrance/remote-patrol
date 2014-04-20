@@ -75,6 +75,7 @@ var up = false;
 var down = false;
 var override = false;
 var override_buf = false;
+var doBlinkOrange = false;
 //----Done with vars
 
 
@@ -101,6 +102,8 @@ app.get('/update', function(req, res){
 app.get('/lift', function(req, res){
 	client.takeoff();
 	con.loc.reset();
+  //autonomous flying
+  client.animateLeds('blinkOrange',2,1000);
 	res.send(true);
 });
 app.get('/land', function(req, res){
@@ -166,8 +169,11 @@ app.get('/off', function(req, res){	//This handles turning off all commands
 		if(override_buf == false)
 		{
 			override = false;
-			//autonomous flying
-			client.animateLeds('blinkOrange',2,1000);
+      if(doBlinkOrange) {
+  			//autonomous flying
+  			client.animateLeds('blinkOrange',2,1000);
+      }
+      else doBlinkOrange = true;
 		}
 	}, 3000);
 	override_buf = false;
