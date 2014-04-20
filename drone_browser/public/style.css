@@ -1,0 +1,141 @@
+body {
+     font-family: sans-serif;
+     background-color: black;
+     color:#04ff04;
+
+}
+#cam {
+    margin: 0 auto;
+    display: block;
+    border-radius: 5px;
+    border: 3px #050 solid;
+    width: 640px;
+    height: 360px;
+}
+#stats {
+    position: absolute;
+    bottom: 20px; 
+    right: 20px;
+    font-size: 26px;
+    text-shadow:2px 2px #888;
+}
+.buttons {
+    text-align: center;
+}
+.dropdown-menu {
+    text-align: left;
+}
+
+#d-pad {
+  position: absolute;
+  top: 110px;
+  left: 65px;
+  height: 150px;
+  width: 150px;
+}
+#d-pad .d-pad-button {
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  background-color: #04ff04;
+  color: #444;
+  font-size: 44px;
+  text-align: center;
+  border-bottom-right-radius: 7px;
+  border-bottom-left-radius: 7px;
+  cursor: pointer;
+}
+#d-pad #up-button {
+  left: 50px;
+  box-shadow: -3px 0 0 #888;
+  -webkit-transform: rotate(180deg);
+}
+#d-pad #up-button:active {
+  -webkit-transform: translate(0,3px) rotate(180deg) rotate3d(1, 0, 0, 20deg);
+  box-shadow: -1px 0 0 #888;
+}
+#d-pad #left-button {
+  top: 50px;
+  box-shadow: 3px 0px 0px #888;
+  -webkit-transform: rotate(90deg);
+}
+#d-pad #left-button:active {
+  -webkit-transform: translate(3px,0) rotate(90deg) rotate3d(1, 0, 0, 20deg);
+  box-shadow: 1px 0 0 #888;
+}
+#d-pad #right-button {
+  top: 50px;
+  left: 100px;
+  box-shadow: -3px 3px 0 #888;
+  -webkit-transform: rotate(270deg);
+}
+#d-pad #right-button:active {
+  -webkit-transform: translate(-3px,0) rotate(270deg) rotate3d(1, 0, 0, 20deg);
+  box-shadow: -1px 1px 0 #888;
+}
+#d-pad #down-button {
+  left: 50px;
+  top: 100px;
+  box-shadow: 3px 1px 0px #888;
+}
+#d-pad #down-button:active {
+  -webkit-transform: translate(0,-3px) rotate3d(1, 0, 0, 20deg);
+  box-shadow: 1px 0 0 #888;
+}
+#d-pad #middle-part {
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  top: 50px;
+  left: 50px;
+  background-color: #04ff04;
+}
+#d-pad #middle-part::before {
+  content: "";
+  position: absolute;
+  height: 30px;
+  width: 30px;
+  margin: 10px 0 0 10px;
+  border-right: 1px solid #111;
+  border-bottom: 1px solid #111;
+  border-radius: 50%;
+}
+
+#alt-pad {
+  position: absolute;
+  top: 110px;
+  left: 245px;
+  height: 150px;
+  width: 85px;
+  text-align:left;
+  font-size: 34px;
+  color: #888;
+}
+
+#alt-pad .alt-pad-button{
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+    border-width: 0 37.5px 65.0px 37.5px;
+    border-color: transparent transparent #04ff04 transparent;
+}
+#go-up-button {
+    top: 0px;
+    box-shadow: 0 3px 0 #888;
+    margin-bottom:20px;
+}
+#go-up-button:active{
+    -webkit-transform: translate(0,3px) rotate3d(1, 0, 0, 20deg);
+}
+#go-down-button {
+    -webkit-transform: rotate(299.5deg) translate(10px, -17px);
+    top: 95px;
+    box-shadow: 0 3px 0 #888;
+}
+#go-down-button:active {
+    -webkit-transform: rotate(300deg) translate(10px, -17px) rotate3d(.6, .6, 0, 20deg);
+}
+
+#shifttext {
+    -webkit-transform: translate(-16px,15px);
+}
