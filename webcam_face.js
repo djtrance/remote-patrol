@@ -9,10 +9,10 @@ var http = require('http');
 
 var vid = new cv.VideoCapture(0);
 
-var window1 = new cv.NamedWindow("Video Stream reg", 0);
 var window3 = new cv.NamedWindow("Video Stream body", 0);
 
 var iter = 0;
+var lastIm = null;
 
 var lowThresh = 0;
 var highThresh = 100;
@@ -33,46 +33,59 @@ var callback = setInterval( function() {
   vid.read(function(err, im){
       var all = new cv.Matrix(im.height(), im.width());
 
-      body = im.copy();
+      if(im == null) //dropped frame
+          return;
+      faces_circled = im.copy();
 
-      body.detectObject(cv.FACE_CASCADE, {}, function(err, bodies){
-          for(var i=0; i<bodies.length; i++) { //start face count
+      faces_circled.detectObject(cv.FACE_CASCADE, {}, function(err, faces){
+          for(var i=0; i<faces.length; i++) { //start face count
             //for(var i=0; i<1; i++) { //start face count
-              var b = bodies[i];
+              var b = faces[i];
               var unique = true;
 
               //THIS PART
               if(b != null)
-              for (var j = i; j < bodies.length; j++)
+              for (var j = j + 1; j < faces.length; j++)
               {
-                  var cb = bodies[j];
+                  var cb = faces[j];
                   if(cb != null && (
                          (Math.abs(cb.x - b.x)> (b.width) && Math.abs(cb.y - b.y)> (b.height))
                       || (Math.abs(cb.x - b.x)>(cb.width) && Math.abs(cb.y - b.y)>(cb.height))
                     ) || i == j )
                   {
-                      if (unique)
-                        body.ellipse(b.x + b.width/2, b.y + b.height/2, b.width/2, b.height/2);
                   }
                   else
                   {
-                      bodies[j] = null;
+                      unique = false;
+                      faces[j] = null;
                   }
-              }
-          }
-          window3.show(body);
-          //body.save("./out")
-      });
-      im.convertGrayscale();
-      im_canny = im.copy();
+             }
+             else
+             {
+                 unique = false;
+             }
+             if (unique)
+             {
+                faces_circled.ellipse(b.x + b.width/2, b.y + b.height/2, b.width/2, b.height/2);
+                //setTimeout(function(){}, 250);
+             }
+            window3.show(faces_circled);
 
-      if(im)
+          }
+          //faces_circled.save("./out")
+      });
+      //im.convertGrayscale();
+      //im_canny = im.copy();
+
+      //if(im)
           //window1.show(im);
       //console.log(""+iter);
       iter++;
 
+      lastIm = im;
+
   })
-}, 33);
+}, 300);
 
 // When opening a file, the full path must be passed to opencv
 /*
