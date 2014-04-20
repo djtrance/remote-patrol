@@ -85,12 +85,14 @@ client.on('data', function (data) {
 					//console.log(JSON.stringify(parseStructure, null,'\t'));
 					for (i=0; i < parseStructure.objects.length; i++) {
 						if ((( parseStructure.objects[i].relVelo.posX * parseStructure.objects[i].relVelo.posX
-							+ parseStructure.objects[i].relVelo.posY * parseStructure.objects[i].relVelo.posY) > 57500) && 
-							(parseStructure.objects[i].classification == 3 || parseStructure.objects[i].classification == 2)
+							 + parseStructure.objects[i].relVelo.posY * parseStructure.objects[i].relVelo.posY) > 57500) 
+						  &&  (parseStructure.objects[i].classification == 3 || parseStructure.objects[i].classification == 2)
 							) {
 							//console.log(parseStructure.objects[i].objectID);
 							objectPosX = parseStructure.objects[0].boundingBoxCntr.posX;
-							objectPosY = parseStructure.objects[0].boundingBoxCntr.posX;
+							objectPosY = parseStructure.objects[0].boundingBoxCntr.posY;
+							//console.log("x: " + parseStructure.objects[0].boundingBoxCntr.posX);
+							//console.log("y: " + parseStructure.objects[0].boundingBoxCntr.posY);
 						}
 					}
 				} 
