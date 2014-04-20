@@ -70,7 +70,7 @@ Locator.prototype.processData = function(d) {
     //console.log("Mag: " + this.mag);
 }
 
-Locator.prototype.reset() {
+Locator.prototype.reset = function() {
     this.xLoc = 0;
     this.yLoc = 0;
 }

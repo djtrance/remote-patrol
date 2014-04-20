@@ -96,13 +96,6 @@ app.get('/FINGERS_CROSSED.html', function(req, res){
 	res.sendfile("./FINGERS_CROSSED.html");
 });
 app.get('/update', function(req, res){
-	var dataArray = con.getData(override||manBuffer);
-	dataArray[13] = front;
-	dataArray[14] = back;
-	dataArary[15] = left;
-	dataArray[16] = right;
-	dataArray[17] = up;
-	dataArray[18] = down;
 	res.send(con.getData(override||manBuffer));
 });
 app.get('/lift', function(req, res){
@@ -160,15 +153,15 @@ app.get('/act', function(req, res){	//This one activates controlling
 });
 app.get('/off', function(req, res){	//This handles turning off all commands
 	console.log("off");
-	if(req.param('act') == 0)
-	{
+	//if(req.param('act') == 0)
+	//{
 		front = false;
 		back = false;
 		left = false;
 		right = false;
 		up = false;
 		down = false;
-	}
+	//}
 	setTimeout(function(){
 		if(override_buf == false)
 		{

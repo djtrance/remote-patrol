@@ -134,7 +134,7 @@ $("#lift").mousedown(function(){
     });
 })
 
-$('html').keydown(function(event){ w=87 a=65 d=68 s=83 q=81 ' '=32
+$('html').keydown(function(event){ //w=87 a=65 d=68 s=83 q=81 ' '=32
   if(event.which == 87)
   {
     front = true;
@@ -211,7 +211,7 @@ $('html').keydown(function(event){ w=87 a=65 d=68 s=83 q=81 ' '=32
   }
 })
 
-$('html').keyup(function(event){ w=87 a=65 d=68 s=83 q=81 ' '=32
+$('html').keyup(function(event){ //w=87 a=65 d=68 s=83 q=81 ' '=32
   if(event.which == 87)
   {
     front = false;
