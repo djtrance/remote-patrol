@@ -44,7 +44,7 @@
     return socket.publish("/drone/navdata", data);
   });
   imageSendingPaused = false;
-  drone.getPngStream().on("data", function(frame) {
+  drone.getVideoStream().on("data", function(frame) {
     currentImg = frame;
     if (imageSendingPaused) {
       return;
@@ -56,7 +56,7 @@
     }), 10);
   });
   app.get("/image/:id", function(req, res) {
-    res.writeHead(200, {
+    res.writeHead(2, {
       "Content-Type": "image/png"
     });
     return res.end(currentImg, "binary");
