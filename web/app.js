@@ -97,6 +97,13 @@ app.get('/FINGERS_CROSSED.html', function(req, res){
 	res.sendfile("./FINGERS_CROSSED.html");
 });
 app.get('/update', function(req, res){
+	var dataArray = con.getData(override||manBuffer);
+	dataArray[13] = front;
+	dataArray[14] = back;
+	dataArray[15] = left;
+	dataArray[16] = right;
+	dataArray[17] = up;
+	dataArray[18] = down;
 	res.send(con.getData(override||manBuffer));
 });
 app.get('/lift', function(req, res){
@@ -206,8 +213,8 @@ process.on('SIGINT', function() {
         console.log('\nGot SIGINT. Landing, press Control-C again to force exit.');
         exiting = true;
         isFlying = false;
-                //landing (MOST IMPORTANT!)
-        client.animateLeds('blinkGreen',2,1);
+        //landing (MOST IMPORTANT!)
+		    client.animateLeds('blinkGreen',2,1);
         con.kill();
         client.stop();
         client.land();
@@ -236,7 +243,7 @@ client.after(2500, function(){
         if(override)
         {
         	//-------Control overrides for web UI controls
-        	client.stop();
+        	//client.stop();
         	//console.log("Overridden: " + "front:"+ front+" back:"+ back+" left:"+ left+" right:"+ right);
         	if(front) client.front(0.3);
         	if(back) client.back(0.3);
@@ -290,8 +297,8 @@ client.after(2500, function(){
         {
             console.log('Trykill');
             clearInterval(atGoal);
-                         //landing (MOST IMPORTANT!)
-            //client.animateLeds('blinkGreen',2,1);
+            //landing (MOST IMPORTANT!)
+			      //client.animateLeds('blinkGreen',2,1);
             client.stop();
             client.land();
 

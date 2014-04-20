@@ -120,7 +120,7 @@ Controller.prototype.stable = function() {
 }
 
 Controller.prototype.getData = function(manual) {
-	var dataArray = this.loc.getData();
+	var dataArray = this.loc.getData(manual);
 	dataArray[11] = this.xGoal;
 	dataArray[12] = this.yGoal;
 	return dataArray;
