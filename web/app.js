@@ -75,7 +75,7 @@ var up = false;
 var down = false;
 var override = false;
 var override_buf = false;
-var doBlinkOrange = false;
+var isFlying = false;
 //----Done with vars
 
 
@@ -109,6 +109,7 @@ app.get('/update', function(req, res){
 app.get('/lift', function(req, res){
 	client.takeoff();
 	con.loc.reset();
+  isFlying = true;
   //autonomous flying
   //client.animateLeds('blinkOrange',2,1000);
 	res.send(true);
@@ -116,12 +117,18 @@ app.get('/lift', function(req, res){
 app.get('/land', function(req, res){
     console.log('Land control');
     exiting = true;
+    isFlying = false;
+    //landing (MOST IMPORTANT!)
+    client.animateLeds('blinkGreen',2,1);
     con.kill();
     client.stop();
+<<<<<<< HEAD
     //landing (MOST IMPORTANT!)
 	//client.animateLeds('blinkGreen',2,1);
+=======
+>>>>>>> FETCH_HEAD
     client.land();
-	res.send(true);
+	  res.send(true);
 });
 app.get('/act', function(req, res){	//This one activates controlling
 	console.log(req.param('act'));
@@ -157,8 +164,15 @@ app.get('/act', function(req, res){	//This one activates controlling
 	}
 	override = true;
 	override_buf = true;
+<<<<<<< HEAD
 	//manual flying
 	//client.animateLeds('blinkStandard',1,4);
+=======
+  if (isFlying) {
+  	//manual flying
+  	client.animateLeds('standard',1,4);
+  }
+>>>>>>> FETCH_HEAD
 	res.send(true);
 });
 app.get('/off', function(req, res){	//This handles turning off all commands
@@ -176,11 +190,18 @@ app.get('/off', function(req, res){	//This handles turning off all commands
 		if(override_buf == false)
 		{
 			override = false;
+<<<<<<< HEAD
 	     	if(doBlinkOrange) {
 	  			//autonomous flying
 	  			//client.animateLeds('blinkOrange',2,1000);
 	      	}
 	      	else doBlinkOrange = true;
+=======
+        if (isFlying) {
+          //autonomous flying
+          client.animateLeds('blinkOrange',2,1000);
+        }
+>>>>>>> FETCH_HEAD
 		}
 	}, 3000);
 	override_buf = false;
@@ -209,9 +230,14 @@ process.on('SIGINT', function() {
     } else {
         console.log('\nGot SIGINT. Landing, press Control-C again to force exit.');
         exiting = true;
-        con.kill();
+        isFlying = false;
         //landing (MOST IMPORTANT!)
+<<<<<<< HEAD
 		//client.animateLeds('blinkGreen',2,1);
+=======
+        client.animateLeds('blinkGreen',2,1);
+        con.kill();
+>>>>>>> FETCH_HEAD
         client.stop();
         client.land();
     }
@@ -227,8 +253,15 @@ client.after(2500, function(){
             var testBuf = setInterval(function() {
                 clearInterval(testBuf);
                 manBuffer =true;
+<<<<<<< HEAD
                 //manual flying
 				//client.animateLeds('blinkStandard',1,4);
+=======
+                if (isFlying) {
+                  //manual flying
+  				        client.animateLeds('standard',1,4);
+                }
+>>>>>>> FETCH_HEAD
             }, 200);
         }
         con.update(manBuffer||override);	//Update the controller to move if not overridden
@@ -272,8 +305,15 @@ client.after(2500, function(){
           if(!leaper.manCtrl())		//If leaper is actually not under control anymore
           {
             manBuffer = false;
+<<<<<<< HEAD
             //autonomous flying
 			//client.animateLeds('blinkOrange',2,1000);
+=======
+            if(isFlying) {
+              //autonomous flying
+  			      client.animateLeds('blinkOrange',2,1000);
+            }
+>>>>>>> FETCH_HEAD
           }
           if(neut)		//If no commands are being given to leaper, stabilize
           {
@@ -289,7 +329,11 @@ client.after(2500, function(){
             console.log('Trykill');
             clearInterval(atGoal);
             //landing (MOST IMPORTANT!)
+<<<<<<< HEAD
 			//client.animateLeds('blinkGreen',2,1);
+=======
+			      client.animateLeds('blinkGreen',2,1);
+>>>>>>> FETCH_HEAD
             client.stop();
             client.land();
         }
